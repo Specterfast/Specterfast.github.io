@@ -22,7 +22,7 @@
     <meta name="description" content="">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>about · Specter&#39;s Blog</title>
+    <title>最长公共子序列 · Specter&#39;s Blog</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -203,7 +203,7 @@
 </head>
 
     
-        <body class="about-body">
+        <body class="post-body">
     
     
 <header class="header">
@@ -211,6 +211,15 @@
     <div class="read-progress"></div>
     <div class="header-sidebar-menu">&#xe775;</div>
     <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/">Specter&#39;s Blog</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">最长公共子序列</a>
+            </div>
+    </div>
     
     <a class="home-link" href="/">Specter's Blog</a>
 </header>
@@ -229,23 +238,69 @@ height:50vh;
     <!-- 主页  -->
     
     
+    <!-- 404页  -->
             
     <div class="site-intro-placeholder"></div>
-    <div class="site-intro-img" style="background-image: url(/intro/about-bg.jpg)"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            about
+            最长公共子序列
+            <!-- 404 -->
             
         </h1>
         <!-- 副标题 -->
         <p class="intro-subtitle">
             <!-- 主页副标题  -->
             
+            
+            <!-- 404 -->
+            
         </p>
         <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="算法">算法</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="动态规划">动态规划</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">546</span>阅读时长: <span class="post-count reading-time">3 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/11/06</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
         
     </div>
 </div>
@@ -346,12 +401,58 @@ height:50vh;
 </script>        
         <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
         <div class="container container-unloaded">
-            <!-- 不可以删除，否则会调用post的layout  -->
-<main class="main about-page">
+            <main class="main post-page">
     <article class="article-entry">
-        <h3 id="座右铭"><a href="#座右铭" class="headerlink" title="座右铭"></a>座右铭</h3><p>得之坦然，失之淡然。<br>争其必然，顺其自然。</p>
+        <p>求解两个字符串的最长公共子序列<a id="more"></a></p>
+<h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p><a href="https://imgchr.com/i/iTuPxJ" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/11/06/iTuPxJ.md.png" alt="iTuPxJ.md.png"></a></p>
+<h3 id="最长公共子序列"><a href="#最长公共子序列" class="headerlink" title="最长公共子序列"></a>最长公共子序列</h3><h4 id="最优解-最大长度"><a href="#最优解-最大长度" class="headerlink" title="最优解(最大长度)"></a>最优解(最大长度)</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">void LCSlength(int m,int n,char *x,char *y,int **c,int **b)</span><br><span class="line">&#123;</span><br><span class="line">	int i,j;</span><br><span class="line">	<span class="keyword">for</span>(i=1;i&lt;=m;i++)c[i][0]=0;   </span><br><span class="line">	<span class="keyword">for</span>(i=1;i&lt;=n;i++)c[0][i]=0;  //i=0或者j=0,最长公共子序列为空 </span><br><span class="line">	<span class="keyword">for</span>(i=1;i&lt;=m;i++)</span><br><span class="line">		<span class="keyword">for</span>(j=1;j&lt;=n;j++)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span>(x[i]==y[j])      //x[i]=y[j]时,c[i][j]=斜上方的c[i-1][j-1]+1 </span><br><span class="line">			&#123;</span><br><span class="line">				c[i][j]=c[i-1][j-1]+1;</span><br><span class="line">				b[i][j]=1;      //b[i][j]=1;表示c[i][j]来自斜上方的值+1而来 </span><br><span class="line">			&#125;</span><br><span class="line">			        //下面 max(c[i-1][j],c[][j-1]) </span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">if</span>(c[i-1][j]&gt;c[i][j-1]) </span><br><span class="line">			&#123;</span><br><span class="line">				c[i][j]=c[i-1][j];</span><br><span class="line">				b[i][j]=2;     //b[i][j]=2;表示c[i][j]来自正上方的值+1而来</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">			&#123;</span><br><span class="line">				c[i][j]=c[i][j-1];</span><br><span class="line">				b[i][j]=3;     //b[i][j]=3;表示c[i][j]来自左方的值+1而来</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="最优解的序列"><a href="#最优解的序列" class="headerlink" title="最优解的序列"></a>最优解的序列</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">void LCS(int i,int j,char *x,char **b)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span>(i==0||j==0)<span class="built_in">return</span>;</span><br><span class="line">	<span class="keyword">if</span>(b[i][j]==1)</span><br><span class="line">	&#123;</span><br><span class="line">		LCS(i-1,j-1,x,b);</span><br><span class="line">		cout&lt;&lt;x[i];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span>(b[i][j]==2)</span><br><span class="line">		LCS(i-1,j,x,b);</span><br><span class="line">	<span class="keyword">else</span> </span><br><span class="line">		LCS(i,j-1,x,b);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#include &lt;stdio.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;string.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;stdlib.h&gt;</span></span><br><span class="line"><span class="comment">#include&lt;iostream&gt;</span></span><br><span class="line">using namespace std;</span><br><span class="line">int c[2000][2000];</span><br><span class="line">char x[2000],y[2000];</span><br><span class="line">/*最优解，输出公共序列</span><br><span class="line">void LCS(int i,int j)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span>(i==0||j==0)<span class="built_in">return</span>;</span><br><span class="line">	<span class="keyword">if</span>(b[i][j]==1)</span><br><span class="line">	&#123;</span><br><span class="line">		LCS(i-1,j-1,x,b);</span><br><span class="line">		cout&lt;&lt;x[i-1];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span>(b[i][j]==2)</span><br><span class="line">		LCS(i-1,j);</span><br><span class="line">	<span class="keyword">else</span> </span><br><span class="line">		LCS(i,j-1);</span><br><span class="line">&#125;*/</span><br><span class="line">int LCSLength(int m,int n)</span><br><span class="line">&#123;</span><br><span class="line">	int i, j;</span><br><span class="line">	int len;</span><br><span class="line">	<span class="keyword">for</span> (i = 1; i &lt;= m; i++)</span><br><span class="line">		c[i][0] = 0;</span><br><span class="line">	<span class="keyword">for</span> (i = 1; i&lt;=n; i++)</span><br><span class="line">		c[0][i] = 0;</span><br><span class="line">	<span class="keyword">for</span> (i = 1; i &lt;= m; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">for</span> (j = 1; j &lt;= n; j++)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span> (x[i-1]==y[j-1])</span><br><span class="line">			&#123;</span><br><span class="line">				c[i][j] = c[i - 1][j - 1] + 1;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">if</span> (c[i - 1][j] &gt;=c[i][j - 1])</span><br><span class="line">			&#123;</span><br><span class="line">				c[i][j] = c[i - 1][j];</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">			&#123;</span><br><span class="line">				c[i][j] = c[i][j - 1];</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	len = c[m][n];</span><br><span class="line">	<span class="built_in">return</span> len;</span><br><span class="line">&#125;</span><br><span class="line">int main(void)</span><br><span class="line">&#123;</span><br><span class="line">	int m,n, len;</span><br><span class="line">	<span class="keyword">while</span>(cin &gt;&gt; x)&#123;</span><br><span class="line">	cin &gt;&gt; y;</span><br><span class="line">	m= strlen(x);</span><br><span class="line">	n= strlen(y);</span><br><span class="line">	len = LCSLength(m,n);</span><br><span class="line">	cout &lt;&lt; len &lt;&lt; endl;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
     </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://specterfast.github.io">Specter</a>
+            </p><p>原文链接：<a href="http://specterfast.github.io/2018/11/06/最长公共子序列/">http://specterfast.github.io/2018/11/06/最长公共子序列/</a>
+            </p><p>发表日期：<a href="http://specterfast.github.io/2018/11/06/最长公共子序列/">November 6th 2018, 10:04:07 pm</a>
+            </p><p>更新日期：<a href="http://specterfast.github.io/2018/11/06/最长公共子序列/">November 6th 2018, 10:13:33 pm</a>
+            </p><p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2018/11/06/最大子段和/" title="最大子段和">
+                    <div class="nextTitle">最大子段和</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2018/11/06/0-1背包/" title="0-1背包">
+                    <div class="prevTitle">0-1背包</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
 </main>
             <!-- profile -->
             
@@ -436,6 +537,24 @@ height:50vh;
 </footer>
     </div>
     <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#题目描述"><span class="toc-number">1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#最长公共子序列"><span class="toc-number">2.</span> <span class="toc-text">最长公共子序列</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#最优解-最大长度"><span class="toc-number">2.1.</span> <span class="toc-text">最优解(最大长度)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#最优解的序列"><span class="toc-number">2.2.</span> <span class="toc-text">最优解的序列</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#完整代码"><span class="toc-number">3.</span> <span class="toc-text">完整代码</span></a></li></ol>
+    </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
     <div class="sidebar sidebar-hide">
@@ -659,6 +778,8 @@ jsonContent:
     
     </div>
     <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
      
     </body>
 </html>
