@@ -272,7 +272,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">1k</span>阅读时长: <span class="post-count reading-time">4 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">1.6k</span>阅读时长: <span class="post-count reading-time">6 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -463,6 +463,32 @@ height:50vh;
 <p>GET获取uname，id<br>POST获取passwd</p>
 <p>===：比较两个变量的只和类型  ==：比较值，不比较类型<br>要使uname的sha1和值与passwd的sha1的值相等即可，但是同时他们两个的值又不能相等<br>很熟悉的套路  只要构造数组</p>
 <p>构造，即可得到flag<br><img src="https://s1.ax1x.com/2018/12/16/FwFnhQ.png" alt="FwFnhQ.png"></p>
+<h3 id="求getshell"><a href="#求getshell" class="headerlink" title="求getshell"></a>求getshell</h3><p>是一道文件上传题，<br>开始改了各种后缀名，尝试了很多都不行</p>
+<p>好不容易拿到这个的时候，还以为快成功了，搜了搜wp，发现还是做错了<br><img src="https://s1.ax1x.com/2018/12/17/F0YLVK.png" alt="F0YLVK.png"></p>
+<p>用bp抓包后，然后更改头部信息Content-Type,<br><img src="https://s1.ax1x.com/2018/12/17/F0YX5D.png" alt="F0YX5D.png"></p>
+<p>通过修改Content-type后字母的大小写可以绕过检测，<br>分别将后缀名修改为php2, php3, php4, php5, phps, pht, phtm, phtml（php的别名），发现只有php5没有被过滤<br>然后修改文件后缀名为.php5</p>
+<p><img src="https://s1.ax1x.com/2018/12/17/F0Yx8H.png" alt="F0Yx8H.png"><br><img src="https://s1.ax1x.com/2018/12/17/F0tSxA.png" alt="F0tSxA.png"></p>
+<h3 id="程序员的本地网站"><a href="#程序员的本地网站" class="headerlink" title="程序员的本地网站"></a>程序员的本地网站</h3><p>要求从本地访问<br>直接bp抓包，伪装成本地登录，在头部添加 X-forwarded-for:127.0.0.1</p>
+<p><img src="https://s1.ax1x.com/2018/12/17/F0tka8.png" alt="F0tka8.png"></p>
+<p>在做题过程中发现了点问题，不知道是迷惑人，还是存在的bug</p>
+<p><img src="https://s1.ax1x.com/2018/12/17/F0te2j.png" alt="F0te2j.png"><br><img src="https://s1.ax1x.com/2018/12/17/F0tKrq.png" alt="F0tKrq.png"><br><img src="https://s1.ax1x.com/2018/12/17/F0tMq0.png" alt="F0tMq0.png"><br><img src="https://s1.ax1x.com/2018/12/17/F0t1aT.png" alt="F0t1aT.png"><br><img src="https://s1.ax1x.com/2018/12/17/F0t3IU.png" alt="F0t3IU.png"></p>
+<h3 id="cookie欺骗"><a href="#cookie欺骗" class="headerlink" title="cookie欺骗"></a>cookie欺骗</h3><p><img src="https://s1.ax1x.com/2018/12/17/F0tJG4.png" alt="F0tJG4.png"><br>URL上有段base64，解密后的信息是”keys.txt”</p>
+<p><img src="https://s1.ax1x.com/2018/12/17/F0tdqx.png" alt="F0tdqx.png"><br>参数line是按行返回信息</p>
+<p>从keys.txt可以看出，”filename=”后面直接加的是文件名的base64编码</p>
+<p>猜测index.php文件是否存在，把index.php转成base64：aW5kZXgucGhw<br>填入url，<br>payload：<a href="http://123.206.87.240:8002/web11/index.php?line=&amp;filename=aW5kZXgucGhw" target="_blank" rel="noopener">http://123.206.87.240:8002/web11/index.php?line=&amp;filename=aW5kZXgucGhw</a></p>
+<p>查看源码，有信息<br><img src="https://s1.ax1x.com/2018/12/17/F0tBdK.png" alt="F0tBdK.png"></p>
+<p>把line改成line=3试试，有信息<br><img src="https://s1.ax1x.com/2018/12/17/F0tDIO.png" alt="F0tDIO.png"></p>
+<p>写一个脚本，获得index.php中的信息<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line"></span><br><span class="line">re=requests.Session()</span><br><span class="line">url=<span class="string">'http://123.206.87.240:8002/web11/index.php'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(0,20):</span><br><span class="line">    key=&#123;<span class="string">'line'</span>:str(i),<span class="string">'filename'</span>:<span class="string">'aW5kZXgucGhw'</span>&#125;</span><br><span class="line">    a=re.get(url,params=key).content</span><br><span class="line">    code=str(a,encoding=<span class="string">"utf-8"</span>)</span><br><span class="line">    <span class="built_in">print</span>(code)</span><br></pre></td></tr></table></figure></p>
+<p>拿到index.php的源码<br><img src="https://s1.ax1x.com/2018/12/17/F0tyJe.png" alt="F0tyJe.png"></p>
+<p>可以看到，cookie的名字和值都是”margin”<br><img src="https://s1.ax1x.com/2018/12/17/F0t6RH.png" alt="F0t6RH.png"></p>
+<p>修改cookie：margin=margin  ,修改filename的值为keys.php的base64编码，访问keys.php(图中标1处，即为keys.php的base64编码)<br><img src="https://s1.ax1x.com/2018/12/17/F0tczd.png" alt="F0tczd.png"></p>
+<h3 id="速度要快"><a href="#速度要快" class="headerlink" title="速度要快"></a>速度要快</h3><p>查看源码，要post一个margin<br><img src="https://s1.ax1x.com/2018/12/17/F0theP.png" alt="F0theP.png"></p>
+<p>bp抓包，<br><img src="https://s1.ax1x.com/2018/12/17/F0t5o8.png" alt="F0t5o8.png"></p>
+<p>Base64解码之后，又一个base64，再解码<br><img src="https://s1.ax1x.com/2018/12/17/F0t7WQ.png" alt="F0t7WQ.png"></p>
+<p>得到几个数字，没什么用啊<br><img src="https://s1.ax1x.com/2018/12/17/F0tHzj.png" alt="F0tHzj.png"></p>
+<p>bp又抓了一次，发现flag居然变了，又进行了解码，也没用<br><img src="https://s1.ax1x.com/2018/12/17/F0tqQs.png" alt="F0tqQs.png"></p>
+<p>看了大佬的wp，使用脚本做的，学习一下<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">import base64</span><br><span class="line"></span><br><span class="line">url=<span class="string">"http://123.206.87.240:8002/web6/"</span></span><br><span class="line">r=requests.session()</span><br><span class="line">headers=r.get(url).headers<span class="comment">#因为flag在消息头里</span></span><br><span class="line"></span><br><span class="line">mid=base64.b64decode(headers[<span class="string">'flag'</span>])</span><br><span class="line"></span><br><span class="line">mid=mid.decode()<span class="comment">#为了下一步用split不报错，b64decode后操作的对象是byte类型的字符串，而split函数要用str类型的</span></span><br><span class="line"></span><br><span class="line">flag = base64.b64decode(mid.split(<span class="string">':'</span>)[1])<span class="comment">#获得flag:后的值</span></span><br><span class="line">data=&#123;<span class="string">'margin'</span>:flag&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span> (r.post(url,data).text)<span class="comment">#post方法传上去</span></span><br></pre></td></tr></table></figure></p>
+<p>拿到flag<br><img src="https://s1.ax1x.com/2018/12/17/F0tvwV.png" alt="F0tvwV.png"></p>
 
     </article>
     <!-- license  -->
@@ -471,7 +497,7 @@ height:50vh;
             <p>原文作者：<a href="https://specters.top">Specter</a>
             </p><p>原文链接：<a href="https://specters.top/2018/12/16/Bugku-Web-WriteUp/">https://specters.top/2018/12/16/Bugku-Web-WriteUp/</a>
             </p><p>发表日期：<a href="https://specters.top/2018/12/16/Bugku-Web-WriteUp/">December 16th 2018, 4:50:11 pm</a>
-            </p><p>更新日期：<a href="https://specters.top/2018/12/16/Bugku-Web-WriteUp/">December 16th 2018, 9:50:37 pm</a>
+            </p><p>更新日期：<a href="https://specters.top/2018/12/16/Bugku-Web-WriteUp/">December 17th 2018, 5:08:51 pm</a>
             </p><p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -603,7 +629,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Web2"><span class="toc-number">2.</span> <span class="toc-text">Web2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#计算器"><span class="toc-number">3.</span> <span class="toc-text">计算器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#web基础-Get"><span class="toc-number">4.</span> <span class="toc-text">web基础$_Get</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#web基础-POST"><span class="toc-number">5.</span> <span class="toc-text">web基础$_POST</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#矛盾"><span class="toc-number">6.</span> <span class="toc-text">矛盾</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Web3"><span class="toc-number">7.</span> <span class="toc-text">Web3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#域名解析"><span class="toc-number">8.</span> <span class="toc-text">域名解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#你必须让他停下"><span class="toc-number">9.</span> <span class="toc-text">你必须让他停下</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#本地包含"><span class="toc-number">10.</span> <span class="toc-text">本地包含</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#变量一"><span class="toc-number">11.</span> <span class="toc-text">变量一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Web3-1"><span class="toc-number">12.</span> <span class="toc-text">Web3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#头等舱"><span class="toc-number">13.</span> <span class="toc-text">头等舱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#网站被黑"><span class="toc-number">14.</span> <span class="toc-text">网站被黑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#管理员系统"><span class="toc-number">15.</span> <span class="toc-text">管理员系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Web4"><span class="toc-number">16.</span> <span class="toc-text">Web4</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flag在index里"><span class="toc-number">17.</span> <span class="toc-text">flag在index里</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#点击一百万次"><span class="toc-number">18.</span> <span class="toc-text">点击一百万次</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#本地包含2"><span class="toc-number">19.</span> <span class="toc-text">本地包含2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#各种绕过"><span class="toc-number">20.</span> <span class="toc-text">各种绕过</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Web2"><span class="toc-number">2.</span> <span class="toc-text">Web2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#计算器"><span class="toc-number">3.</span> <span class="toc-text">计算器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#web基础-Get"><span class="toc-number">4.</span> <span class="toc-text">web基础$_Get</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#web基础-POST"><span class="toc-number">5.</span> <span class="toc-text">web基础$_POST</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#矛盾"><span class="toc-number">6.</span> <span class="toc-text">矛盾</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Web3"><span class="toc-number">7.</span> <span class="toc-text">Web3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#域名解析"><span class="toc-number">8.</span> <span class="toc-text">域名解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#你必须让他停下"><span class="toc-number">9.</span> <span class="toc-text">你必须让他停下</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#本地包含"><span class="toc-number">10.</span> <span class="toc-text">本地包含</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#变量一"><span class="toc-number">11.</span> <span class="toc-text">变量一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Web3-1"><span class="toc-number">12.</span> <span class="toc-text">Web3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#头等舱"><span class="toc-number">13.</span> <span class="toc-text">头等舱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#网站被黑"><span class="toc-number">14.</span> <span class="toc-text">网站被黑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#管理员系统"><span class="toc-number">15.</span> <span class="toc-text">管理员系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Web4"><span class="toc-number">16.</span> <span class="toc-text">Web4</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flag在index里"><span class="toc-number">17.</span> <span class="toc-text">flag在index里</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#点击一百万次"><span class="toc-number">18.</span> <span class="toc-text">点击一百万次</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#本地包含2"><span class="toc-number">19.</span> <span class="toc-text">本地包含2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#各种绕过"><span class="toc-number">20.</span> <span class="toc-text">各种绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#求getshell"><span class="toc-number">21.</span> <span class="toc-text">求getshell</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#程序员的本地网站"><span class="toc-number">22.</span> <span class="toc-text">程序员的本地网站</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cookie欺骗"><span class="toc-number">23.</span> <span class="toc-text">cookie欺骗</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#速度要快"><span class="toc-number">24.</span> <span class="toc-text">速度要快</span></a></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
@@ -616,6 +642,10 @@ top:50vh;
     <div class="sidebar-content sidebar-content-show-archive">
           <div class="sidebar-panel-archives">
     <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
     
     
     
@@ -869,12 +899,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/13</span><a class="archive-post-title" href="/2018/11/13/JAVA学习/">JAVA环境</a>
+            <span class="archive-post-date">11/13</span><a class="archive-post-title" href="/2018/11/13/java环境配置/">JAVA环境</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/13</span><a class="archive-post-title" href="/2018/11/13/java环境配置/">JAVA环境</a>
+            <span class="archive-post-date">11/13</span><a class="archive-post-title" href="/2018/11/13/JAVA学习/">JAVA环境</a>
         </li>
     
     
@@ -904,18 +934,20 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">10/29</span><a class="archive-post-title" href="/2018/10/29/hxd查看文件头-文件尾/">hxd查看文件头,文件尾</a>
+            <span class="archive-post-date">10/29</span><a class="archive-post-title" href="/2018/10/29/Linux命令简介/">Linux命令简介</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">10/29</span><a class="archive-post-title" href="/2018/10/29/Linux命令简介/">Linux命令简介</a>
+            <span class="archive-post-date">10/29</span><a class="archive-post-title" href="/2018/10/29/hxd查看文件头-文件尾/">hxd查看文件头,文件尾</a>
         </li>
     
     </ul></div>
   </div>
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="CTF"><span class="iconfont-archer">&#xe606;</span>CTF</span>
     
         <span class="sidebar-tag-name" data-tags="0-1背包"><span class="iconfont-archer">&#xe606;</span>0-1背包</span>
     
@@ -925,15 +957,13 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="动态规划"><span class="iconfont-archer">&#xe606;</span>动态规划</span>
     
-        <span class="sidebar-tag-name" data-tags="ctf"><span class="iconfont-archer">&#xe606;</span>ctf</span>
-    
-        <span class="sidebar-tag-name" data-tags="MISC"><span class="iconfont-archer">&#xe606;</span>MISC</span>
-    
-        <span class="sidebar-tag-name" data-tags="CTF"><span class="iconfont-archer">&#xe606;</span>CTF</span>
-    
         <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
     
         <span class="sidebar-tag-name" data-tags="Linux"><span class="iconfont-archer">&#xe606;</span>Linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="ctf"><span class="iconfont-archer">&#xe606;</span>ctf</span>
+    
+        <span class="sidebar-tag-name" data-tags="MISC"><span class="iconfont-archer">&#xe606;</span>MISC</span>
     
         <span class="sidebar-tag-name" data-tags="Python"><span class="iconfont-archer">&#xe606;</span>Python</span>
     
@@ -972,15 +1002,15 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="算法"><span class="iconfont-archer">&#xe60a;</span>算法</span>
-    
-        <span class="sidebar-category-name" data-categories="MISC"><span class="iconfont-archer">&#xe60a;</span>MISC</span>
-    
         <span class="sidebar-category-name" data-categories="CTF"><span class="iconfont-archer">&#xe60a;</span>CTF</span>
+    
+        <span class="sidebar-category-name" data-categories="算法"><span class="iconfont-archer">&#xe60a;</span>算法</span>
     
         <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
     
         <span class="sidebar-category-name" data-categories="Linux"><span class="iconfont-archer">&#xe60a;</span>Linux</span>
+    
+        <span class="sidebar-category-name" data-categories="MISC"><span class="iconfont-archer">&#xe60a;</span>MISC</span>
     
         <span class="sidebar-category-name" data-categories="Crypto"><span class="iconfont-archer">&#xe60a;</span>Crypto</span>
     
