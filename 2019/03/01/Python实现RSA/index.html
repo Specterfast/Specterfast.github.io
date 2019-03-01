@@ -22,7 +22,7 @@
     <meta name="description" content="">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>about · Specter&#39;s Blog</title>
+    <title>Python实现RSA · Specter&#39;s Blog</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -203,7 +203,7 @@
 </head>
 
     
-        <body class="about-body">
+        <body class="post-body">
     
     
 <header class="header">
@@ -211,6 +211,15 @@
     <div class="read-progress"></div>
     <div class="header-sidebar-menu">&#xe775;</div>
     <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/">Specter&#39;s Blog</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Python实现RSA</a>
+            </div>
+    </div>
     
     <a class="home-link" href="/">Specter's Blog</a>
 </header>
@@ -229,23 +238,69 @@ height:50vh;
     <!-- 主页  -->
     
     
+    <!-- 404页  -->
             
     <div class="site-intro-placeholder"></div>
-    <div class="site-intro-img" style="background-image: url(/intro/about-bg.jpg)"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            about
+            Python实现RSA
+            <!-- 404 -->
             
         </h1>
         <!-- 副标题 -->
         <p class="intro-subtitle">
             <!-- 主页副标题  -->
             
+            
+            <!-- 404 -->
+            
         </p>
         <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="Crypto">Crypto</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="Python">Python</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">2k</span>阅读时长: <span class="post-count reading-time">8 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2019/03/01</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
         
     </div>
 </div>
@@ -346,12 +401,66 @@ height:50vh;
 </script>        
         <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
         <div class="container container-unloaded">
-            <!-- 不可以删除，否则会调用post的layout  -->
-<main class="main about-page">
+            <main class="main post-page">
     <article class="article-entry">
-        <h3 id="座右铭"><a href="#座右铭" class="headerlink" title="座右铭"></a>座右铭</h3><p>得之坦然，失之淡然。<br>争其必然，顺其自然。</p>
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>密码学作业之RSA</p>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>RSA公开密钥密码体制。所谓的公开密钥密码体制就是使用不同的加密密钥与解密密钥，是一种“由已知加密密钥推导出解密密钥在计算上是不可行的”密码体制。</p>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>RSA 算法的可靠性基础：对极大整数做因数分解是很困难的。<br>RSA 是非对称算法，加解密使用不同的密钥。<br>两个密钥都可以用于加密，解密时需要使用另一个密钥。但是，通常用公钥加密私钥解密，因为公钥是近乎完全公开的，对于私钥加密的数据，有太多的人可以解密了。理论上 A 和 B 之间要通过 RSA 实现保密通信，需要 A 和 B 各自生成一组密钥，同时保管好自己的私钥；用对方的公钥加密要发送的消息，用自己的私钥解密对方发送过来的消息。</p>
+<p><strong>加密公式：</strong><br>               <code>c=me mod n</code><br><strong>解密公式：</strong><br>               <code>m=cd mod n</code></p>
+<p><strong>加密过程：</strong><br>（1）    获得接收方公钥（e,n）<br>（2）    把消息m分组为长度为L的消息分组<br>（3）    使用上面加密算法计算出密文<br>（4）    将密文c发送给接收方</p>
+<p><strong>解密过程:</strong><br>（1）    接收方收到明文c<br>（2）    使用私钥d和上面的解密算法逐一恢复明文分组<br>            （3） 得到明文消息m</p>
+<p><strong>生成公钥和私钥:</strong></p>
+<p>（1）随意选择两个大的质数 p 和 q，p 不等于 q，计算 N=pq。<br>（2）根据欧拉函数，求得 r=φ(N)=φ(p)φ(q)=(p−1)(q−1)<br>（3）选择一个小于 r 的整数 e，使 e 与 r 互质。并求得 e 关于 r 的模反元素，命名为 d（求 d 令 ed≡1(modr)）。（模反元素存在，当且仅当 e 与 r 互质）</p>
+<p><strong>将 p 和 q 的记录销毁</strong><br>(N,e) 是公钥， (N,d)(N,d) 是私钥。公钥发送给所有的通信对象（对服务器来说就是所有的客户端），私钥则必须保管好，防止泄露。</p>
+<p><strong>核心代码</strong><br>扩展欧几里得算法求模反元素<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">def ex_euclid(a, b, list):</span><br><span class="line">    if b == 0:</span><br><span class="line">        list[0] = 1L</span><br><span class="line">        list[1] = 0L</span><br><span class="line">        list[2] = a</span><br><span class="line">    else:</span><br><span class="line">        ex_euclid(b, a % b, list)</span><br><span class="line">        temp = list[0]</span><br><span class="line">        list[0] = list[1]</span><br><span class="line">        list[1] = temp - a / b * list[1]</span><br></pre></td></tr></table></figure></p>
+<p>求模反元素<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">def mod_inverse(a, b):</span><br><span class="line">    list = [0L, 0L, 0L]</span><br><span class="line">    if a &lt; b:</span><br><span class="line">        a, b = b, a</span><br><span class="line">    ex_euclid(a, b, list)</span><br><span class="line">    if list[1] &lt; 0:</span><br><span class="line">        list[1] = a + list[1]</span><br><span class="line">    	   return list[1]</span><br></pre></td></tr></table></figure></p>
+<p>快速幂模运算，把b拆分为二进制，遍历b的二进制，当二进制位为0时不计入计算<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">def quick_pow_mod(a, b, c):</span><br><span class="line">    a = a % c</span><br><span class="line">    ans = 1</span><br><span class="line">    while b != 0:</span><br><span class="line">        if b &amp; 1:</span><br><span class="line">            ans = (ans * a) % c</span><br><span class="line">        b &gt;&gt;= 1</span><br><span class="line">        a = (a % c) * (a % c)</span><br><span class="line">    	   return ans</span><br><span class="line"></span><br><span class="line">def miller_rabin_witness(a, n):</span><br><span class="line">    if n == 1:      # n为要检验的大数，a &lt; n,k = n - 1</span><br><span class="line">        return False</span><br><span class="line">    if n == 2:</span><br><span class="line">        return True</span><br><span class="line">    k = n - 1</span><br><span class="line">    q = int(math.floor(math.log(k, 2)))</span><br><span class="line">    while q &gt; 0:</span><br><span class="line">        m = k / 2 ** q</span><br><span class="line">        if k % 2 ** q == 0 and m % 2 == 1:</span><br><span class="line">            break</span><br><span class="line">        q = q - 1</span><br><span class="line">    if quick_pow_mod(a, n - 1, n) != 1:</span><br><span class="line">        return False</span><br><span class="line">    b1 = quick_pow_mod(a, m, n)</span><br><span class="line">    for i in range(1, q + 1):</span><br><span class="line">        if b1 == n - 1 or b1 == 1:</span><br><span class="line">            return True</span><br><span class="line">        b2 = b1 ** 2 % n</span><br><span class="line">        b1 = b2</span><br><span class="line">    if b1 == 1:</span><br><span class="line">        return True</span><br><span class="line">    	   return False</span><br></pre></td></tr></table></figure></p>
+<p>Miller-Rabin素性检验算法,检验8次<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">def prime_test_miller_rabin(p, k):</span><br><span class="line">    while k &gt; 0:</span><br><span class="line">        a = random.randint(1, p - 1)</span><br><span class="line">        if not miller_rabin_witness(a, p):</span><br><span class="line">            return False</span><br><span class="line">        k = k - 1</span><br><span class="line">    		   return True</span><br></pre></td></tr></table></figure></p>
+<p>判断 num 是否与 prime_arr 中的每一个数都互质<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">def prime_each(num, prime_arr):</span><br><span class="line">    for prime in prime_arr:</span><br><span class="line">        remainder = num % prime</span><br><span class="line">        if remainder == 0:</span><br><span class="line">            return False</span><br><span class="line">    return True</span><br></pre></td></tr></table></figure></p>
+<p><strong>正确性分析</strong><br>ϕ(n)=(p−1)(q−1) 成立的正确性，ϕ(n)表示小于n且与n互质数的个数则小于等于n且与n非互质的数的个数为，n-ϕ(n) = n - (p-1)<em>(q-1) = n - (pq-q-p+1) = n-n+p+q-1 = p+q-1所以只要证明小于等于n且与n非互质的数的个数为p+q-1即能证明ϕ(n)=(p−1)(q−1) ：这点很容易证明，由于n只有两个素因子p，q。则所有与n非互质的数都可以写成p</em>x或q<em>x，对于p</em>x来讲，x的取值范围为1&lt;=x&lt;=q，对q<em>x来讲x的取值范围为1&lt;=x&lt;=p，p</em>x与q<em>x的唯一交集为p</em>q，所以结论成立。</p>
+<p><strong>合理性分析</strong><br>RSA是目前最有影响力和最常用的公钥加密算法，它能够抵抗到目前为止已知的绝大多数密码攻击，已被ISO推荐为公钥数据加密标准。今天只有短的RSA钥匙才可能被强力方式解破。只要其钥匙的长度足够长，用RSA加密的信息实际上是不能被解破的。<br>但是RSA还是有缺陷的：<br>（1）产生密钥很麻烦，受到素数产生技术的限制，因而难以做到一次一密。<br>（2）安全性，RSA的安全性依赖于大数的因子分解，但并没有从理论上证明破译RSA的难度与大数分解难度等价，而且密码学界多数人士倾向于因子分解不是NP问题。<br>（3）速度太慢，由于RSA 的分组长度太大，为保证安全性，n 至少也要 600 bits以上，使运算代价很高，尤其是速度较慢，较对称密码算法慢几个数量级;且随着大数分解技术的发展，这个长度还在增加，不利于数据格式的标准化。</p>
+<p><strong>安全性分析</strong><br>RSA的安全性依赖于大数分解，这样攻击RSA系统的难度就是大整数因子分解的难度，一般认为这是一个NPC问题，但是否等同于大数分解一直未能得到理论上的证明，因为没有证明破解RSA就一定需要作大数分解。假设存在一种无须分解大数的算法，那它肯定可以修改成为大数分解算法。 RSA 的一些变种算法已被证明等价于大数分解。不管怎样，分解n是最显然的攻击方法。人们已能分解多个十进制位的大素数。因此，模数n必须选大一些，因具体适用情况而定。<br>攻击方法：<br>（1）    共模攻击<br>（2）    分析RSA锁结构<br>（3）    素因子的分解<br>若用1台1 s能进行1亿次因子分解的高速计算机来计算，分解十进制长度为200位的n，其所需时间为3 800 000年.由此可见，对于RSA系统，如果用一个长度为200位（十进制）的n，认为它是比较安全的，如果n的长度更长，因子分解越困难，一般来说，每增加10位二进制数，分解的时间就要加长1倍.密码就越难以破译，加密强度就越高</p>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line">#coding:utf-8</span><br><span class="line">import base64</span><br><span class="line">import random</span><br><span class="line"></span><br><span class="line">str1 = &quot;abcdefg&quot;</span><br><span class="line"></span><br><span class="line">e = 65537	#公钥</span><br><span class="line"></span><br><span class="line">#快速幂 大大减少了计算幂的时间复杂度</span><br><span class="line">def quick(a,b,n):</span><br><span class="line">	ans = 1</span><br><span class="line">	a = a%n</span><br><span class="line">	while b!=0:</span><br><span class="line">		if b&amp;1==1:</span><br><span class="line">			ans = (ans*a)%n</span><br><span class="line">		b&gt;&gt;=1</span><br><span class="line">		a = (a*a)%n</span><br><span class="line">	return ans</span><br><span class="line"></span><br><span class="line">#Miller—Rabin素性判断</span><br><span class="line">def miller_rabin(n,k=80):</span><br><span class="line">    if n == 2 or n == 3:</span><br><span class="line">        return True</span><br><span class="line">    if n % 2 == 0:</span><br><span class="line">        return False</span><br><span class="line">    r, s = 0, n - 1</span><br><span class="line">    while s % 2 == 0:</span><br><span class="line">        r += 1</span><br><span class="line">        s //= 2</span><br><span class="line">    for _ in xrange(k):</span><br><span class="line">        a = random.randrange(2, n - 1)</span><br><span class="line">        x = pow(a, s, n)</span><br><span class="line">        if x == 1 or x == n - 1:</span><br><span class="line">            continue</span><br><span class="line">        for _ in xrange(r - 1):</span><br><span class="line">            x = pow(x, 2, n)</span><br><span class="line">            if x == n - 1:</span><br><span class="line">                break</span><br><span class="line">        else:</span><br><span class="line">            return False</span><br><span class="line">    return True</span><br><span class="line"></span><br><span class="line">def proBin():</span><br><span class="line">	while True:</span><br><span class="line">		p = &quot;1&quot;</span><br><span class="line">		for i in range(0,1022):</span><br><span class="line">			p = p+str(random.randint(0,1))</span><br><span class="line">		p = p+&quot;1&quot;</span><br><span class="line">		p = int(p,2)</span><br><span class="line">		if miller_rabin(p):</span><br><span class="line">			return p</span><br><span class="line"></span><br><span class="line">#求模拟，用扩展欧几里得除法</span><br><span class="line">def modReserse(a,m):</span><br><span class="line">	u1,u2,u3 = 1,0,a</span><br><span class="line">	v1,v2,v3 = 0,1,m</span><br><span class="line">	while v3!=0:</span><br><span class="line">		q = u3//v3</span><br><span class="line">		v1,v2,v3,u1,u2,u3 = (u1-q*v1),(u2-q*v2),(u3-q*v3),v1,v2,v3</span><br><span class="line">	return u1%m</span><br><span class="line"></span><br><span class="line">def encrypt(m,n):</span><br><span class="line">	c = str(quick(int(m),e,n))</span><br><span class="line">	return c</span><br><span class="line"></span><br><span class="line">def decrypt(c,p,q):</span><br><span class="line">	n = p*q</span><br><span class="line">	d = modReserse(e,(p-1)*(q-1))</span><br><span class="line">	m = str(quick(int(c),d,n))</span><br><span class="line">	return m</span><br><span class="line"></span><br><span class="line">if __name__ == &apos;__main__&apos;:</span><br><span class="line">	m = base64.b16encode(str1)</span><br><span class="line">	p=proBin()</span><br><span class="line">	q=proBin()</span><br><span class="line">	print &apos;p=&apos;,p</span><br><span class="line">	print &apos;q=&apos;,q</span><br><span class="line">	n = p*q</span><br><span class="line">	c = encrypt(m,n)</span><br><span class="line">	print &quot;Encrypt：&quot;</span><br><span class="line">	print c</span><br><span class="line">	m = decrypt(c,p,q)</span><br><span class="line">	print &quot;Decrypt：&quot;</span><br><span class="line">	print base64.b16decode(m)</span><br></pre></td></tr></table></figure>
 
     </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="https://specters.top">Specter</a>
+            </p><p>原文链接：<a href="https://specters.top/2019/03/01/Python实现RSA/">https://specters.top/2019/03/01/Python实现RSA/</a>
+            </p><p>发表日期：<a href="https://specters.top/2019/03/01/Python实现RSA/">March 1st 2019, 9:19:05 pm</a>
+            </p><p>更新日期：<a href="https://specters.top/2019/03/01/Python实现RSA/">March 1st 2019, 9:39:26 pm</a>
+            </p><p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2019/03/01/Python实现DES/" title="Python实现DES">
+                    <div class="prevTitle">Python实现DES</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
 </main>
             <!-- profile -->
             
@@ -436,6 +545,24 @@ height:50vh;
 </footer>
     </div>
     <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#简介"><span class="toc-number">2.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#原理"><span class="toc-number">3.</span> <span class="toc-text">原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#代码"><span class="toc-number">4.</span> <span class="toc-text">代码</span></a></li></ol>
+    </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
     <div class="sidebar sidebar-hide">
@@ -1032,6 +1159,8 @@ jsonContent:
     
     </div>
     <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
      
     </body>
 </html>
