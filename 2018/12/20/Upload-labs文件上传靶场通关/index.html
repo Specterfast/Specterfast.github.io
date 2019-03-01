@@ -459,8 +459,11 @@ height:50vh;
 <p><img src="https://s2.ax1x.com/2019/01/25/knpklj.png" alt="knpklj.png"><br>添加一个1.php+(任意名称)</p>
 <p><img src="https://s2.ax1x.com/2019/01/25/knpukT.png" alt="knpukT.png"><br>这里的2b对应的就是<strong>+</strong>号，将2b改成00，即可成功截断，1.php也可成功上传利用<br><img src="https://s2.ax1x.com/2019/01/25/knp43Q.png" alt="knp43Q.png"></p>
 <h3 id="Pass-13"><a href="#Pass-13" class="headerlink" title="Pass-13"></a>Pass-13</h3><p>查看源码，<br><img src="https://s2.ax1x.com/2019/01/26/kn3mtS.png" alt="kn3mtS.png"></p>
-<p>可以看出，验证上传文件类型的方法是：通过判断上传文件的前两个字节来判断的，所以直接上传图片马即可绕过.jpg和.png检查，制作方法<br><figure class="highlight plain"><figcaption><span>1.jpg</span><a href="/b">+ info.php /a shell.jpg```</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1.jpg是一个图片，info.php写入一句话木马的文件，shell.jpg复制后的文件</span><br><span class="line">![kn3Mlj.png](https://s2.ax1x.com/2019/01/26/kn3Mlj.png)</span><br><span class="line"></span><br><span class="line">添加GIF图片的文件头GIF89a，绕过GIF图片检查。</span><br><span class="line"></span><br><span class="line">一句话木马也可以上传成功</span><br><span class="line">![knGCqI.png](https://s2.ax1x.com/2019/01/26/knGCqI.png)</span><br><span class="line">文件路径也会显示，然后就可以利用文件包含漏洞。</span><br><span class="line">![knGaLR.png](https://s2.ax1x.com/2019/01/26/knGaLR.png)</span><br><span class="line"></span><br><span class="line">可以写一个include.php:</span><br></pre></td></tr></table></figure></p>
-<p>&lt;?php<br>$file=$_GET[‘page’];<br>include($file);<br>?&gt;<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">然后放在upload中，在你上传成功图片马之后，你可以访问，执行phpinfo().</span><br><span class="line">```http://127.0.0.1/uploadlab/upload/include.php?page=upload/5020190128200535.jpg</span><br></pre></td></tr></table></figure></p>
+<p>可以看出，验证上传文件类型的方法是：通过判断上传文件的前两个字节来判断的，所以直接上传图片马即可绕过.jpg和.png检查，制作方法<br><code>copy 1.jpg /b + info.php /a shell.jpg</code><br>1.jpg是一个图片，info.php写入一句话木马的文件，shell.jpg复制后的文件<br><img src="https://s2.ax1x.com/2019/01/26/kn3Mlj.png" alt="kn3Mlj.png"></p>
+<p>添加GIF图片的文件头GIF89a，绕过GIF图片检查。</p>
+<p>一句话木马也可以上传成功<br><img src="https://s2.ax1x.com/2019/01/26/knGCqI.png" alt="knGCqI.png"><br>文件路径也会显示，然后就可以利用文件包含漏洞。<br><img src="https://s2.ax1x.com/2019/01/26/knGaLR.png" alt="knGaLR.png"></p>
+<p>可以写一个include.php:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$file=$_GET[&apos;page&apos;];</span><br><span class="line">include($file);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>然后放在upload中，在你上传成功图片马之后，你可以访问，执行phpinfo().<br><code>http://127.0.0.1/uploadlab/upload/include.php?page=upload/5020190128200535.jpg</code></p>
 <h3 id="Pass-14"><a href="#Pass-14" class="headerlink" title="Pass-14"></a>Pass-14</h3><p>查看源码，<br><img src="https://s2.ax1x.com/2019/01/26/knGLOs.png" alt="knGLOs.png"><br>这里使用getimagesize获取文件类型<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> getimagesize() 函数将测定任何 GIF，JPG，PNG，SWF，SWC，PSD，TIFF，BMP，IFF，JP2，JPX，JB2，JPC，XBM 或 WBMP 图像文件的大小并返回图像的尺寸以及文件类型和一个可以用于普通 HTML 文件中 IMG 标记中的 height/width 文本字符串。</span><br><span class="line"></span><br><span class="line">如果不能访问 filename 指定的图像或者其不是有效的图像，getimagesize() 将返回 FALSE 并产生一条 E_WARNING 级的错误。</span><br></pre></td></tr></table></figure></p>
 <p>利用图片马就可进行绕过，和上一关一样。</p>
 <h3 id="Pass-15"><a href="#Pass-15" class="headerlink" title="Pass-15"></a>Pass-15</h3><p>查看源码，<br><img src="https://s2.ax1x.com/2019/01/26/kntVJK.png" alt="kntVJK.png"></p>
@@ -483,7 +486,7 @@ height:50vh;
             <p>原文作者：<a href="https://specters.top">Specter</a>
             </p><p>原文链接：<a href="https://specters.top/2018/12/20/Upload-labs文件上传靶场通关/">https://specters.top/2018/12/20/Upload-labs文件上传靶场通关/</a>
             </p><p>发表日期：<a href="https://specters.top/2018/12/20/Upload-labs文件上传靶场通关/">December 20th 2018, 9:30:47 pm</a>
-            </p><p>更新日期：<a href="https://specters.top/2018/12/20/Upload-labs文件上传靶场通关/">January 29th 2019, 2:51:51 pm</a>
+            </p><p>更新日期：<a href="https://specters.top/2018/12/20/Upload-labs文件上传靶场通关/">February 26th 2019, 3:45:59 pm</a>
             </p><p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -882,14 +885,9 @@ top:50vh;
     
     
     
-    
-    
-    
-    
-    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 20
+        Total : 21
         </div>
         <!-- search  -->
         
@@ -902,6 +900,11 @@ top:50vh;
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/01</span><a class="archive-post-title" href="/2019/03/01/Linux配置本地yum源/">Linux配置本地yum源</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -944,12 +947,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/14</span><a class="archive-post-title" href="/2018/12/14/python仿射密码/">python仿射密码</a>
+            <span class="archive-post-date">12/14</span><a class="archive-post-title" href="/2018/12/14/python凯撒加解密/">python凯撒加解密</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/14</span><a class="archive-post-title" href="/2018/12/14/python凯撒加解密/">python凯撒加解密</a>
+            <span class="archive-post-date">12/14</span><a class="archive-post-title" href="/2018/12/14/python仿射密码/">python仿射密码</a>
         </li>
     
     
@@ -1004,12 +1007,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">10/29</span><a class="archive-post-title" href="/2018/10/29/hxd查看文件头-文件尾/">hxd查看文件头,文件尾</a>
+            <span class="archive-post-date">10/29</span><a class="archive-post-title" href="/2018/10/29/Linux命令简介/">Linux命令简介</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">10/29</span><a class="archive-post-title" href="/2018/10/29/Linux命令简介/">Linux命令简介</a>
+            <span class="archive-post-date">10/29</span><a class="archive-post-title" href="/2018/10/29/hxd查看文件头-文件尾/">hxd查看文件头,文件尾</a>
         </li>
     
     </ul></div>
@@ -1017,25 +1020,25 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="CTF"><span class="iconfont-archer">&#xe606;</span>CTF</span>
+        <span class="sidebar-tag-name" data-tags="0-1背包"><span class="iconfont-archer">&#xe606;</span>0-1背包</span>
+    
+        <span class="sidebar-tag-name" data-tags="完全背包"><span class="iconfont-archer">&#xe606;</span>完全背包</span>
     
         <span class="sidebar-tag-name" data-tags="算法"><span class="iconfont-archer">&#xe606;</span>算法</span>
     
         <span class="sidebar-tag-name" data-tags="动态规划"><span class="iconfont-archer">&#xe606;</span>动态规划</span>
     
-        <span class="sidebar-tag-name" data-tags="0-1背包"><span class="iconfont-archer">&#xe606;</span>0-1背包</span>
-    
-        <span class="sidebar-tag-name" data-tags="完全背包"><span class="iconfont-archer">&#xe606;</span>完全背包</span>
-    
         <span class="sidebar-tag-name" data-tags="ctf"><span class="iconfont-archer">&#xe606;</span>ctf</span>
     
-        <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
-    
         <span class="sidebar-tag-name" data-tags="Linux"><span class="iconfont-archer">&#xe606;</span>Linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="CTF"><span class="iconfont-archer">&#xe606;</span>CTF</span>
     
         <span class="sidebar-tag-name" data-tags="MISC"><span class="iconfont-archer">&#xe606;</span>MISC</span>
     
         <span class="sidebar-tag-name" data-tags="upload_labs"><span class="iconfont-archer">&#xe606;</span>upload_labs</span>
+    
+        <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
     
         <span class="sidebar-tag-name" data-tags="Python"><span class="iconfont-archer">&#xe606;</span>Python</span>
     
@@ -1076,17 +1079,17 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="CTF"><span class="iconfont-archer">&#xe60a;</span>CTF</span>
-    
         <span class="sidebar-category-name" data-categories="算法"><span class="iconfont-archer">&#xe60a;</span>算法</span>
     
         <span class="sidebar-category-name" data-categories="ctf"><span class="iconfont-archer">&#xe60a;</span>ctf</span>
     
-        <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
-    
         <span class="sidebar-category-name" data-categories="Linux"><span class="iconfont-archer">&#xe60a;</span>Linux</span>
     
+        <span class="sidebar-category-name" data-categories="CTF"><span class="iconfont-archer">&#xe60a;</span>CTF</span>
+    
         <span class="sidebar-category-name" data-categories="MISC"><span class="iconfont-archer">&#xe60a;</span>MISC</span>
+    
+        <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
     
         <span class="sidebar-category-name" data-categories="Crypto"><span class="iconfont-archer">&#xe60a;</span>Crypto</span>
     
