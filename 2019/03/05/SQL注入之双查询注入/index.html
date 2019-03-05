@@ -22,7 +22,7 @@
     <meta name="description" content="">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Specter&#39;s Blog</title>
+    <title>SQL注入之双查询注入 · Specter&#39;s Blog</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -203,12 +203,23 @@
 </head>
 
     
+        <body class="post-body">
+    
     
 <header class="header">
 
     <div class="read-progress"></div>
     <div class="header-sidebar-menu">&#xe775;</div>
     <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/">Specter&#39;s Blog</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">SQL注入之双查询注入</a>
+            </div>
+    </div>
     
     <a class="home-link" href="/">Specter's Blog</a>
 </header>
@@ -220,24 +231,74 @@
 
 
 
+
+height:50vh;
 ">
     
     <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
             
     <div class="site-intro-placeholder"></div>
-    <div class="site-intro-img" style="background-image: url(/)"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
+            
+            SQL注入之双查询注入
+            <!-- 404 -->
             
         </h1>
         <!-- 副标题 -->
         <p class="intro-subtitle">
             <!-- 主页副标题  -->
             
+            
+            <!-- 404 -->
+            
         </p>
         <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="SQL">SQL</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">639</span>阅读时长: <span class="post-count reading-time">2 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2019/03/05</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
         
     </div>
 </div>
@@ -338,97 +399,74 @@
 </script>        
         <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
         <div class="container container-unloaded">
-            <main class="main index-page">
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2019/03/02/PEX批量部署Linux服务器/">
-            
-                <span>PEX批量部署Linux服务器</span>
-        </a>
-        <div class="abstract-content">
-            <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>这部分不一定能用的到
-        </p></div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/03/02</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="Linux">Linux</a>
-    
-</div>
-            
-        </div>
+            <main class="main post-page">
+    <article class="article-entry">
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在做sqlilabs时，了解到的东西，写一下，把学到的总结一下，以后方便看<a id="more"></a></p>
+<h3 id="子查询"><a href="#子查询" class="headerlink" title="子查询"></a>子查询</h3><p>在说双查询之前，先介绍一下子查询。</p>
+<p>查询：任何SQL语句都是查询。但此术语一般指SELECT语句。<br>SQL还允许创建子查询（subquery），即嵌套在其他查询中的查询。</p>
+<p>举个简单的例子，Select concat((select database()));<br>执行的时候，先从子查询进行。因此执行select database()这个语句就会把当前的数据库的名称查出来，然后把结果传入到concat函数。这个函数是用来连接的。比如数据库名字叫’a’和’b’，那么concat(‘a’,’b’)后，结果就是ab了。</p>
+<p>介绍几个函数和语句：</p>
+<blockquote>
+<p>rand()函数   //返回0~1间的小数。</p>
+</blockquote>
+<blockquote>
+<p>floor()函数   //向下取整。向上取整：ceiling()</p>
+</blockquote>
+<blockquote>
+<p>count()函数     //返回匹配指定条件的行数。</p>
+</blockquote>
+<blockquote>
+<p>group by子句    //根据一个或多个列对结果集进行分组。</p>
+</blockquote>
+<h3 id="双查询注入原理"><a href="#双查询注入原理" class="headerlink" title="双查询注入原理"></a>双查询注入原理</h3><p>当在一个聚合函数，比如count()函数后面如果使用分组语句就会把查询的一部分以错误的形式显示出来。</p>
+<p><code>select floor(rand()*2)</code><br>rand()返回0~1间的数，*2之后向下取整后不是0就是1<br><img src="https://s2.ax1x.com/2019/03/05/kXvDwq.png" alt="kXvDwq.png"></p>
+<p>用concat_ws()将子查询的结果连接，<code>select concat((select database()),floor(rand()\*2))</code>可以看到返回结果中有数据库名，注意数据库的名字并不是叫security1和security0，而是数据库名连接的<code>select floor(rand()*2)</code>生成的0或1.<br><img src="https://s2.ax1x.com/2019/03/05/kXx6HI.png" alt="kXx6HI.png"></p>
+<p>如果在这条语句后面加上from一个表名，那么会返回security0或security1的一个集合，数目是由表本身有几条结果决定的：<br><code>select concat((select database()),floor(rand()\*2)) from users;</code><br><img src="https://s2.ax1x.com/2019/03/05/kXxTDs.png" alt="kXxTDs.png"></p>
+<p>这样看来，如果是从information_schema.schemata里，这个表包含了mysql的所有数据库名，则会返回数据库数个结果。<br>我们使用information_schema.tables或者information_schema.columns两个表来查询想要的信息。<br>把<code>concat((select database()),floor(rand()\*2))</code>这个结果取了一个别名a，然后使用它进行分组。这样相同的security0分到一组，security1分到一组,就剩下两个结果了<br><img src="https://s2.ax1x.com/2019/03/05/kXzUqs.png" alt="kXzUqs.png"><br>这里的database()可以替换成任何想查的函数，比如version()，user()等。</p>
+<p>最后一步，使报错中显示想要查询的结果：<br>分别查看database(),version(),user()</p>
+<p><code>select count(\*),concat((select database()),floor(rand()\*2)) as a from information_schema.tables group by a;</code><br><code>select count(\*),concat((select version()),floor(rand()\*2)) as a from information_schema.tables group by a;</code><br><code>select count(\*),concat((select user()),floor(rand()\*2)) as a from information_schema.tables group by a;</code></p>
+<p><img src="https://s2.ax1x.com/2019/03/05/kjpAje.png" alt="kjpAje.png"></p>
+<p><a href="https://blog.csdn.net/Leep0rt/article/details/78556440" target="_blank" rel="noopener">原文链接</a></p>
+
     </article>
+    <!-- license  -->
     
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2019/03/01/Linux配置本地yum源/">
-            
-                <span>Linux配置本地yum源</span>
-        </a>
-        <div class="abstract-content">
-            <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>借着安全牛的课程学习一下Linux。这里是安装了CentOS
-        </p></div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/03/01</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="Linux">Linux</a>
-    
-</div>
-            
+        <div class="license-wrapper">
+            <p>原文作者：<a href="https://specters.top">Specter</a>
+            </p><p>原文链接：<a href="https://specters.top/2019/03/05/SQL注入之双查询注入/">https://specters.top/2019/03/05/SQL注入之双查询注入/</a>
+            </p><p>发表日期：<a href="https://specters.top/2019/03/05/SQL注入之双查询注入/">March 5th 2019, 3:15:59 pm</a>
+            </p><p>更新日期：<a href="https://specters.top/2019/03/05/SQL注入之双查询注入/">March 5th 2019, 4:45:00 pm</a>
+            </p><p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2018/10/29/Linux命令简介/">
-            
-                <span>Linux命令简介</span>
-        </a>
-        <div class="abstract-content">
-            <p>这些是我自己在学习过程中，遇到的一些常用到的命令。
-        </p></div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/29</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="Linux">Linux</a>
-    
-</div>
-            
-        </div>
-    </article>
     
     <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2019/03/05/SQL注入之盲注/" title="SQL注入之盲注">
+                    <div class="prevTitle">SQL注入之盲注</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
     
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
 </main>
             <!-- profile -->
             
@@ -513,6 +551,24 @@
 </footer>
     </div>
     <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#子查询"><span class="toc-number">2.</span> <span class="toc-text">子查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#双查询注入原理"><span class="toc-number">3.</span> <span class="toc-text">双查询注入原理</span></a></li></ol>
+    </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
     <div class="sidebar sidebar-hide">
@@ -1183,6 +1239,8 @@ jsonContent:
     
     </div>
     <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
      
     </body>
 </html>
