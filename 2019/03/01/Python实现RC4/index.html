@@ -274,7 +274,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">815</span>阅读时长: <span class="post-count reading-time">3 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">795</span>阅读时长: <span class="post-count reading-time">3 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -412,7 +412,7 @@ height:50vh;
 <p><strong>正确性分析</strong><br>由于经过加密后的结果，输出的是一些不可见，所以又使用base64进行了再次加密，使其转化为可见字符。</p>
 <p><strong>安全性分析</strong></p>
 <p>理论上来说，RC4算法是很难被破解的。RC4中用到的key是长度在[1,256]的unsigned char字符串，可能性就是256+256^2+256^3+….256^256≈256^256次方种可能性，量级在10^600以上。如果你真的设置了一个256byte（不是bit哦）的key，别人想要暴力破解几乎是不可能的。<br>由于RC4算法加密是采用的xor，所以，一旦子密钥序列出现了重复，密文就有可能被破解。<br>由于存在部分弱密钥，使得子密钥序列在不到100万字节内就发生了完全的重复，如果是部分重复，则可能在不到10万字节内就能发生重复，因此，推荐在使用RC4算法时，必须对加密密钥进行测试，判断其是否为弱密钥。其不足主要体现于，在无线网络中IV（初始化向量）不变性漏洞。<br>  加大被破解的难度：<br>  （1）定时更换key，就像网民应该定时更换自己的密码一样。<br>    （2）在真实原文里混杂一些随机字符串再加密。<br>    （3）并不把加密串直接暴露给公众，可以对加密串做二次加密。（循环移位、字符-字符映射、按某种规则打散、再做一次RC4、等等）</p>
-<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><p>下面给出Python的完整代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line">#-*- coding: UTF-8 -*-</span><br><span class="line">import hashlib</span><br><span class="line">import base64</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def Rc4_init(S, K):  # S盒初始化置换,K为密钥</span><br><span class="line">    j = 0</span><br><span class="line">    K = hashlib.md5(K).hexdigest()</span><br><span class="line">    k = []  # 临时数组</span><br><span class="line">    for i in range(256):</span><br><span class="line">        S.append(i)</span><br><span class="line">        k.append(K[i % len(K)])</span><br><span class="line">    for i in range(256):</span><br><span class="line">        j = (j + S[i] + ord(k[i])) % 256</span><br><span class="line">        S[i], S[j] = S[j], S[i]  # 交换S[i],S[j]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def rc4_Encrypt(S, D):  </span><br><span class="line">    i = j = 0</span><br><span class="line">    result = &apos;&apos;</span><br><span class="line">    for a in D:</span><br><span class="line">        i = (i + 1) % 256</span><br><span class="line">        j = (j + S[i]) % 256</span><br><span class="line">        S[i], S[j] = S[j], S[i]</span><br><span class="line">        t = (S[i] + S[j]) % 256</span><br><span class="line">        </span><br><span class="line">        k = chr(ord(a) ^ S[(S[i] + S[j]) % 256])</span><br><span class="line">        result += k</span><br><span class="line">    result = base64.b64encode(result)</span><br><span class="line">    return result</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def rc4_Decrypt(S, D): </span><br><span class="line">    i = j = 0</span><br><span class="line">    D = base64.b64decode(D)</span><br><span class="line">    result = &apos;&apos;</span><br><span class="line">    for a in D:</span><br><span class="line">        i = (i + 1) % 256</span><br><span class="line">        j = (j + S[i]) % 256</span><br><span class="line">        S[i], S[j] = S[j], S[i]</span><br><span class="line">        t = (S[i] + S[j]) % 256</span><br><span class="line">        </span><br><span class="line">        k = chr(ord(a) ^ S[(S[i] + S[j]) % 256])</span><br><span class="line">        result += k</span><br><span class="line">    return result</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">key = &apos;dasdffdghfghjde&apos;</span><br><span class="line">d = &apos;thisisatest&apos;</span><br><span class="line">print(&quot;key:&quot;+key)</span><br><span class="line">print(&quot;m:&quot;+d)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s=[]</span><br><span class="line">Rc4_init(s, key)</span><br><span class="line">#print(&quot;s盒:&quot;)</span><br><span class="line">#print(s)</span><br><span class="line"></span><br><span class="line">c = rc4_Encrypt(s, d)</span><br><span class="line">print(&quot;Encrypt:&quot;+c)</span><br><span class="line"></span><br><span class="line">s=[]</span><br><span class="line">Rc4_init(s,key)</span><br><span class="line">#print(&quot;s盒:&quot;)</span><br><span class="line">#print(s)</span><br><span class="line"></span><br><span class="line">z = rc4_Decrypt(s, c)</span><br><span class="line">print(&quot;Decrypt:&quot;+z)</span><br></pre></td></tr></table></figure></p>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><p>下面给出Python的完整代码<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Rc4_init</span><span class="params">(S, K)</span>:</span>  <span class="comment"># S盒初始化置换,K为密钥</span></span><br><span class="line">    j = <span class="number">0</span></span><br><span class="line">    K = hashlib.md5(K).hexdigest()</span><br><span class="line">    k = []  <span class="comment"># 临时数组</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">256</span>):</span><br><span class="line">        S.append(i)</span><br><span class="line">        k.append(K[i % len(K)])</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">256</span>):</span><br><span class="line">        j = (j + S[i] + ord(k[i])) % <span class="number">256</span></span><br><span class="line">        S[i], S[j] = S[j], S[i]  <span class="comment"># 交换S[i],S[j]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">rc4_Encrypt</span><span class="params">(S, D)</span>:</span>  </span><br><span class="line">    i = j = <span class="number">0</span></span><br><span class="line">    result = <span class="string">''</span></span><br><span class="line">    <span class="keyword">for</span> a <span class="keyword">in</span> D:</span><br><span class="line">        i = (i + <span class="number">1</span>) % <span class="number">256</span></span><br><span class="line">        j = (j + S[i]) % <span class="number">256</span></span><br><span class="line">        S[i], S[j] = S[j], S[i]</span><br><span class="line">        t = (S[i] + S[j]) % <span class="number">256</span></span><br><span class="line">        </span><br><span class="line">        k = chr(ord(a) ^ S[(S[i] + S[j]) % <span class="number">256</span>])</span><br><span class="line">        result += k</span><br><span class="line">    result = base64.b64encode(result)</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">rc4_Decrypt</span><span class="params">(S, D)</span>:</span> </span><br><span class="line">    i = j = <span class="number">0</span></span><br><span class="line">    D = base64.b64decode(D)</span><br><span class="line">    result = <span class="string">''</span></span><br><span class="line">    <span class="keyword">for</span> a <span class="keyword">in</span> D:</span><br><span class="line">        i = (i + <span class="number">1</span>) % <span class="number">256</span></span><br><span class="line">        j = (j + S[i]) % <span class="number">256</span></span><br><span class="line">        S[i], S[j] = S[j], S[i]</span><br><span class="line">        t = (S[i] + S[j]) % <span class="number">256</span></span><br><span class="line">        </span><br><span class="line">        k = chr(ord(a) ^ S[(S[i] + S[j]) % <span class="number">256</span>])</span><br><span class="line">        result += k</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">key = <span class="string">'dasdffdghfghjde'</span></span><br><span class="line">d = <span class="string">'thisisatest'</span></span><br><span class="line">print(<span class="string">"key:"</span>+key)</span><br><span class="line">print(<span class="string">"m:"</span>+d)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s=[]</span><br><span class="line">Rc4_init(s, key)</span><br><span class="line"><span class="comment">#print("s盒:")</span></span><br><span class="line"><span class="comment">#print(s)</span></span><br><span class="line"></span><br><span class="line">c = rc4_Encrypt(s, d)</span><br><span class="line">print(<span class="string">"Encrypt:"</span>+c)</span><br><span class="line"></span><br><span class="line">s=[]</span><br><span class="line">Rc4_init(s,key)</span><br><span class="line"><span class="comment">#print("s盒:")</span></span><br><span class="line"><span class="comment">#print(s)</span></span><br><span class="line"></span><br><span class="line">z = rc4_Decrypt(s, c)</span><br><span class="line">print(<span class="string">"Decrypt:"</span>+z)</span><br></pre></td></tr></table></figure></p>
 
     </article>
     <!-- license  -->
@@ -421,7 +421,7 @@ height:50vh;
             <p>原文作者：<a href="https://specters.top">Specter</a>
             </p><p>原文链接：<a href="https://specters.top/2019/03/01/Python实现RC4/">https://specters.top/2019/03/01/Python实现RC4/</a>
             </p><p>发表日期：<a href="https://specters.top/2019/03/01/Python实现RC4/">March 1st 2019, 8:50:40 pm</a>
-            </p><p>更新日期：<a href="https://specters.top/2019/03/01/Python实现RC4/">March 1st 2019, 9:40:38 pm</a>
+            </p><p>更新日期：<a href="https://specters.top/2019/03/01/Python实现RC4/">March 7th 2019, 10:40:37 am</a>
             </p><p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -943,12 +943,6 @@ top:50vh;
     
     
     
-    
-    
-    
-    
-    
-    
     <div class="total-and-search">
         <div class="total-archive">
         Total : 28
@@ -967,12 +961,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">03/05</span><a class="archive-post-title" href="/2019/03/05/SQL注入之双查询注入/">SQL注入之双查询注入</a>
+            <span class="archive-post-date">03/05</span><a class="archive-post-title" href="/2019/03/05/SQL注入之盲注/">SQL注入之盲注</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">03/05</span><a class="archive-post-title" href="/2019/03/05/SQL注入之盲注/">SQL注入之盲注</a>
+            <span class="archive-post-date">03/05</span><a class="archive-post-title" href="/2019/03/05/SQL注入之双查询注入/">SQL注入之双查询注入</a>
         </li>
     
     
@@ -1106,12 +1100,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">10/29</span><a class="archive-post-title" href="/2018/10/29/Linux命令简介/">Linux命令简介</a>
+            <span class="archive-post-date">10/29</span><a class="archive-post-title" href="/2018/10/29/hxd查看文件头-文件尾/">hxd查看文件头,文件尾</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">10/29</span><a class="archive-post-title" href="/2018/10/29/hxd查看文件头-文件尾/">hxd查看文件头,文件尾</a>
+            <span class="archive-post-date">10/29</span><a class="archive-post-title" href="/2018/10/29/Linux命令简介/">Linux命令简介</a>
         </li>
     
     </ul></div>
@@ -1119,15 +1113,17 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="0-1背包"><span class="iconfont-archer">&#xe606;</span>0-1背包</span>
-    
-        <span class="sidebar-tag-name" data-tags="完全背包"><span class="iconfont-archer">&#xe606;</span>完全背包</span>
-    
         <span class="sidebar-tag-name" data-tags="算法"><span class="iconfont-archer">&#xe606;</span>算法</span>
     
         <span class="sidebar-tag-name" data-tags="动态规划"><span class="iconfont-archer">&#xe606;</span>动态规划</span>
     
+        <span class="sidebar-tag-name" data-tags="0-1背包"><span class="iconfont-archer">&#xe606;</span>0-1背包</span>
+    
+        <span class="sidebar-tag-name" data-tags="完全背包"><span class="iconfont-archer">&#xe606;</span>完全背包</span>
+    
         <span class="sidebar-tag-name" data-tags="CTF"><span class="iconfont-archer">&#xe606;</span>CTF</span>
+    
+        <span class="sidebar-tag-name" data-tags="ctf"><span class="iconfont-archer">&#xe606;</span>ctf</span>
     
         <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
     
@@ -1137,11 +1133,9 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="Python"><span class="iconfont-archer">&#xe606;</span>Python</span>
     
-        <span class="sidebar-tag-name" data-tags="MISC"><span class="iconfont-archer">&#xe606;</span>MISC</span>
-    
         <span class="sidebar-tag-name" data-tags="SQL"><span class="iconfont-archer">&#xe606;</span>SQL</span>
     
-        <span class="sidebar-tag-name" data-tags="ctf"><span class="iconfont-archer">&#xe606;</span>ctf</span>
+        <span class="sidebar-tag-name" data-tags="MISC"><span class="iconfont-archer">&#xe606;</span>MISC</span>
     
         <span class="sidebar-tag-name" data-tags="upload_labs"><span class="iconfont-archer">&#xe606;</span>upload_labs</span>
     
@@ -1184,17 +1178,17 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="CTF"><span class="iconfont-archer">&#xe60a;</span>CTF</span>
     
+        <span class="sidebar-category-name" data-categories="ctf"><span class="iconfont-archer">&#xe60a;</span>ctf</span>
+    
         <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
     
         <span class="sidebar-category-name" data-categories="Linux"><span class="iconfont-archer">&#xe60a;</span>Linux</span>
     
         <span class="sidebar-category-name" data-categories="Crypto"><span class="iconfont-archer">&#xe60a;</span>Crypto</span>
     
-        <span class="sidebar-category-name" data-categories="MISC"><span class="iconfont-archer">&#xe60a;</span>MISC</span>
-    
         <span class="sidebar-category-name" data-categories="SQL"><span class="iconfont-archer">&#xe60a;</span>SQL</span>
     
-        <span class="sidebar-category-name" data-categories="ctf"><span class="iconfont-archer">&#xe60a;</span>ctf</span>
+        <span class="sidebar-category-name" data-categories="MISC"><span class="iconfont-archer">&#xe60a;</span>MISC</span>
     
         <span class="sidebar-category-name" data-categories="Python"><span class="iconfont-archer">&#xe60a;</span>Python</span>
     
