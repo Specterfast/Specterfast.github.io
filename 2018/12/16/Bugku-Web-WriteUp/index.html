@@ -266,13 +266,15 @@ height:50vh;
                 
                     <div class="post-intro-tags">
     
-        <a class="post-tag" href="javascript:void(0);" data-tags="CTF">CTF</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags="ctf">ctf</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="web">web</a>
     
 </div>
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">1.6k</span>阅读时长: <span class="post-count reading-time">6 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">4.1k</span>阅读时长: <span class="post-count reading-time">18 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -489,7 +491,118 @@ height:50vh;
 <p>bp又抓了一次，发现flag居然变了，又进行了解码，也没用<br><img src="https://s1.ax1x.com/2018/12/17/F0tqQs.png" alt="F0tqQs.png"></p>
 <p>看了大佬的wp，使用脚本做的，学习一下<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">import base64</span><br><span class="line"></span><br><span class="line">url=<span class="string">"http://123.206.87.240:8002/web6/"</span></span><br><span class="line">r=requests.session()</span><br><span class="line">headers=r.get(url).headers<span class="comment">#因为flag在消息头里</span></span><br><span class="line"></span><br><span class="line">mid=base64.b64decode(headers[<span class="string">'flag'</span>])</span><br><span class="line"></span><br><span class="line">mid=mid.decode()<span class="comment">#为了下一步用split不报错，b64decode后操作的对象是byte类型的字符串，而split函数要用str类型的</span></span><br><span class="line"></span><br><span class="line">flag = base64.b64decode(mid.split(<span class="string">':'</span>)[1])<span class="comment">#获得flag:后的值</span></span><br><span class="line">data=&#123;<span class="string">'margin'</span>:flag&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span> (r.post(url,data).text)<span class="comment">#post方法传上去</span></span><br></pre></td></tr></table></figure></p>
 <p>拿到flag<br><img src="https://s1.ax1x.com/2018/12/17/F0tvwV.png" alt="F0tvwV.png"></p>
-
+<h3 id="过狗一句话"><a href="#过狗一句话" class="headerlink" title="过狗一句话"></a>过狗一句话</h3><p>题目给的代码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line">	$poc=<span class="string">"a#s#s#e#r#t"</span>; </span><br><span class="line">	$poc_1=explode(<span class="string">"#"</span>,$poc);</span><br><span class="line">	$poc_2=$poc_1[<span class="number">0</span>].$poc_1[<span class="number">1</span>].$poc_1[<span class="number">2</span>].$poc_1[<span class="number">3</span>].$poc_1[<span class="number">4</span>].$poc_1[<span class="number">5</span>]; 	$poc_2($_GET[<span class="string">'s'</span>]) </span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>explode()函数可以在官方文档看详细信息，就是把字符串打散成数组。</p>
+<p>exlpde()分割a#s#s#e#r#t为assert，使用assert()函数的解析传进来的s串，那就说明可以执行代码。</p>
+<p>payload:</p>
+<blockquote>
+<p>s=print_r(scandir(‘./‘)) 然后读取fl4g.txt   </p>
+<p>s=print_r(glob(“*.*“)) 然后读取show_source(“fl4g.txt”)**</p>
+<p>使用file_get_contents(“flag.txt”)读取文件**</p>
+</blockquote>
+<p>读取文件还可以使用readfile()和fopen(),可以任意读取文件。</p>
+<blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; ?s=print_r(readfile(<span class="string">'../etc/hosts'</span>))</span><br><span class="line">&gt; ?s=print_r(fopen(<span class="string">'../etc/hosts'</span>,<span class="string">'r'</span>))</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h4 id="md5-collision"><a href="#md5-collision" class="headerlink" title="md5 collision"></a>md5 collision</h4><p>题目提示是MD5碰撞，开始试了几个a=1之类的，都报是false，猜测应该是要输入的这个值，MD5之后是以0e开头的字符串，因为，PHP在处理哈希字符串时，会利用!=或==来对哈希值进行比较，它把每一个以0e开头的哈希值都解释为0</p>
+<p>payload：<code>?a=s155964671a</code></p>
+<h4 id="never-give-up"><a href="#never-give-up" class="headerlink" title="never give up"></a>never give up</h4><p>打开题目，看看源码，发现一个1.html，查看源码，</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">HTML</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">HEAD</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">SCRIPT</span> <span class="attr">LANGUAGE</span>=<span class="string">"Javascript"</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="undefined">&lt;!--</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="undefined">var Words ="%3Cscript%3Ewindow.location.href%3D%27http%3A//www.bugku.com%27%3B%3C/script%3E%20%0A%3C%21--JTIyJTNCaWYlMjglMjElMjRfR0VUJTVCJTI3aWQlMjclNUQlMjklMEElN0IlMEElMDloZWFkZXIlMjglMjdMb2NhdGlvbiUzQSUyMGhlbGxvLnBocCUzRmlkJTNEMSUyNyUyOSUzQiUwQSUwOWV4aXQlMjglMjklM0IlMEElN0QlMEElMjRpZCUzRCUyNF9HRVQlNUIlMjdpZCUyNyU1RCUzQiUwQSUyNGElM0QlMjRfR0VUJTVCJTI3YSUyNyU1RCUzQiUwQSUyNGIlM0QlMjRfR0VUJTVCJTI3YiUyNyU1RCUzQiUwQWlmJTI4c3RyaXBvcyUyOCUyNGElMkMlMjcuJTI3JTI5JTI5JTBBJTdCJTBBJTA5ZWNobyUyMCUyN25vJTIwbm8lMjBubyUyMG5vJTIwbm8lMjBubyUyMG5vJTI3JTNCJTBBJTA5cmV0dXJuJTIwJTNCJTBBJTdEJTBBJTI0ZGF0YSUyMCUzRCUyMEBmaWxlX2dldF9jb250ZW50cyUyOCUyNGElMkMlMjdyJTI3JTI5JTNCJTBBaWYlMjglMjRkYXRhJTNEJTNEJTIyYnVna3UlMjBpcyUyMGElMjBuaWNlJTIwcGxhdGVmb3JtJTIxJTIyJTIwYW5kJTIwJTI0aWQlM0QlM0QwJTIwYW5kJTIwc3RybGVuJTI4JTI0YiUyOSUzRTUlMjBhbmQlMjBlcmVnaSUyOCUyMjExMSUyMi5zdWJzdHIlMjglMjRiJTJDMCUyQzElMjklMkMlMjIxMTE0JTIyJTI5JTIwYW5kJTIwc3Vic3RyJTI4JTI0YiUyQzAlMkMxJTI5JTIxJTNENCUyOSUwQSU3QiUwQSUwOXJlcXVpcmUlMjglMjJmNGwyYTNnLnR4dCUyMiUyOSUzQiUwQSU3RCUwQWVsc2UlMEElN0IlMEElMDlwcmludCUyMCUyMm5ldmVyJTIwbmV2ZXIlMjBuZXZlciUyMGdpdmUlMjB1cCUyMCUyMSUyMSUyMSUyMiUzQiUwQSU3RCUwQSUwQSUwQSUzRiUzRQ%3D%3D--%3E" </span></span><br><span class="line"><span class="undefined">function OutWord()</span></span><br><span class="line"><span class="undefined">&#123;</span></span><br><span class="line"><span class="undefined">var NewWords;</span></span><br><span class="line"><span class="undefined">NewWords = unescape(Words);</span></span><br><span class="line"><span class="undefined">document.write(NewWords);</span></span><br><span class="line"><span class="undefined">&#125; </span></span><br><span class="line"><span class="undefined">OutWord();</span></span><br><span class="line"><span class="undefined">// --&gt;</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">SCRIPT</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">HEAD</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">BODY</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">BODY</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">HTML</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>可以看到中间有一大段base64加密的串，还混这url，base64解密之后，是一段url编码，和一些语句，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%22%3Bif%28%21%24_GET%5B%27id%27%5D%29%0A%7B%0A%09header%28%27Location%3A%20hello.php%3Fid%3D1%27%29%3B%0A%09exit%28%29%3B%0A%7D%0A%24id%3D%24_GET%5B%27id%27%5D%3B%0A%24a%3D%24_GET%5B%27a%27%5D%3B%0A%24b%3D%24_GET%5B%27b%27%5D%3B%0Aif%28stripos%28%24a%2C%27.%27%29%29%0A%7B%0A%09echo%20%27no%20no%20no%20no%20no%20no%20no%27%3B%0A%09return%20%3B%0A%7D%0A%24data%20%3D%20@file_get_contents%28%24a%2C%27r%27%29%3B%0Aif%28%24data%3D%3D%22bugku%20is%20a%20nice%20plateform%21%22%20and%20%24id%3D%3D0%20and%20strlen%28%24b%29%3E5%20and%20eregi%28%22111%22.substr%28%24b%2C0%2C1%29%2C%221114%22%29%20and%20substr%28%24b%2C0%2C1%29%21%3D4%29%0A%7B%0A%09require%28%22f4l2a3g.txt%22%29%3B%0A%7D%0Aelse%0A%7B%0A%09print%20%22never%20never%20never%20give%20up%20%21%21%21%22%3B%0A%7D%0A%0A%0A%3F%3E</span><br></pre></td></tr></table></figure>
+<p>再次url解码之后，得到源码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(!$_GET[<span class="string">'id'</span>])</span><br><span class="line">&#123;</span><br><span class="line">	header(<span class="string">'Location: hello.php?id=1'</span>);</span><br><span class="line">	<span class="keyword">exit</span>();</span><br><span class="line">&#125;</span><br><span class="line">$id=$_GET[<span class="string">'id'</span>];</span><br><span class="line">$a=$_GET[<span class="string">'a'</span>];</span><br><span class="line">$b=$_GET[<span class="string">'b'</span>];</span><br><span class="line"><span class="keyword">if</span>(stripos($a,<span class="string">'.'</span>))</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">'no no no no no no no'</span>;</span><br><span class="line">	<span class="keyword">return</span> ;</span><br><span class="line">&#125;</span><br><span class="line">$data = @file_get_contents($a,<span class="string">'r'</span>);</span><br><span class="line"><span class="keyword">if</span>($data==<span class="string">"bugku is a nice plateform!"</span> <span class="keyword">and</span> $id==<span class="number">0</span> <span class="keyword">and</span> strlen($b)&gt;<span class="number">5</span> <span class="keyword">and</span> eregi(<span class="string">"111"</span>.substr($b,<span class="number">0</span>,<span class="number">1</span>),<span class="string">"1114"</span>) <span class="keyword">and</span> substr($b,<span class="number">0</span>,<span class="number">1</span>)!=<span class="number">4</span>)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">require</span>(<span class="string">"f4l2a3g.txt"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">print</span> <span class="string">"never never never give up !!!"</span>;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>if(stripos($a,’.’))</p>
+<p>if($data==”bugku is a nice plateform!” and $id==0 and strlen($b)&gt;5 and eregi(“111”.substr($b,0,1),”1114”) and substr($b,0,1)!=4)</p>
+</blockquote>
+<p>要求a中不能有字符，id不能是空，且id=0，data=”bugku is a nice plateform!”，id=0，b的长度&gt;5，”111”拼接上b的第一个字符=“1114”，但是b的低一个字符有不能=4，这样才可以包含f412a3g.txt</p>
+<p>我们一点点来分析，</p>
+<p>PHP在处理数字与字符串的结合是会把第一个数字当做整个串的值，比如”<code>1asd</code>“=1，那么我们只要使id的值，是一个字符串，就可以使id弱等于0，</p>
+<p>源码中变量 <code>$data</code> 是由 <code>file_get_contents()</code>读取的 ，file_get_contents() 函数是用于将文件的内容读入到一个字符串中的方法，函数读取变量 <code>$a</code> 的值而得，所以 <code>$a</code> 的值必须为数据流。</p>
+<p>我们不可能创建一个a文件，再写入数据bugku is a nice plateform!。</p>
+<p>那么，要让a=bugku is a nice plateform!，只能利用，用php伪协议 <a href="http://php.net/manual/zh/wrappers.php.php" target="_blank" rel="noopener">php://</a> 来访问输入输出的数据流，它的大概意思就是可以读取我们post传递的只读数据流。所以，令 <code>$a = &quot;php://input&quot;</code>，并post提交字符串 <code>bugku is a nice plateform!</code>。</p>
+<p>而对于eregi(“111”.substr($b,0,1),”1114”)，很简单，直接用%00绕过，可以使b=%0012345</p>
+<p><img src="https://s2.ax1x.com/2019/04/13/AL4QYD.png" alt="AL4QYD.png"></p>
+<p>成得到flag。还有一个方法是，直接读取f4l2a3g.txt</p>
+<p><img src="https://s2.ax1x.com/2019/04/13/AL4JOI.png" alt="AL4JOI.png"></p>
+<p>也可以得到flag。</p>
+<h4 id="welcome-to-bugkuctf"><a href="#welcome-to-bugkuctf" class="headerlink" title="welcome to bugkuctf"></a>welcome to bugkuctf</h4><p>查看源码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$user = $_GET[<span class="string">"txt"</span>];  </span><br><span class="line">$file = $_GET[<span class="string">"file"</span>];  </span><br><span class="line">$pass = $_GET[<span class="string">"password"</span>];  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($user)&amp;&amp;(file_get_contents($user,<span class="string">'r'</span>)===<span class="string">"welcome to the bugkuctf"</span>))&#123;  </span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"hello admin!&lt;br&gt;"</span>;  </span><br><span class="line">    <span class="keyword">include</span>($file); <span class="comment">//hint.php  </span></span><br><span class="line">&#125;<span class="keyword">else</span>&#123;  </span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"you are not admin ! "</span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>有个hint.php，访问试试，什么都没有，不死心，再<code>?file=php://filter/read=convert.base64-encode/resource=hint.php</code>读一下，什么都没有，，，，，，</p>
+<p>还是看源码吧</p>
+<p><code>file_get_contents($user,&#39;r&#39;)===&quot;welcome to the bugkuctf&quot;</code>，意思是把名为$user文件的内容输出到一个字符串，并且要求这个字符串是”welcome to the bugkuctf”，</p>
+<p>这里可以使用php://伪协议，让user=php://，然后post提交welcome to the bugkuctf，这样就可以使语句变成<code>file_get_contents(php://,&#39;r&#39;)</code></p>
+<p>payload ：GET：<code>?txt=php://input</code>     POST：<code>welcome to the bugkuctf</code></p>
+<p><img src="https://s2.ax1x.com/2019/04/13/ALI0Mj.png" alt="ALI0Mj.png"></p>
+<p>页面变了，但是为啥不是hello admin呢？</p>
+<p>而且，flag在哪呢。。。。。。。</p>
+<p>突然想到hint.php，再读一次<code>file=php://filter/read=convert.base64-encode/resource=hint.php</code></p>
+<p>payload：<code>?txt=php://input&amp;file=php://filter/read=convert.base64-encode/resource=hint.php</code></p>
+<p><img src="https://s2.ax1x.com/2019/04/13/ALoUTx.png" alt="ALoUTx.png"></p>
+<p>有东西啊，拿去解码，</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>     <span class="comment">//hint.php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Flag</span></span>&#123;<span class="comment">//flag.php    </span></span><br><span class="line"><span class="keyword">public</span> $file;    </span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__tostring</span><span class="params">()</span></span>&#123;        </span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;file))&#123;           </span><br><span class="line">        <span class="keyword">echo</span> file_get_contents(<span class="keyword">$this</span>-&gt;file); </span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">        <span class="keyword">return</span> (<span class="string">"good"</span>);     </span><br><span class="line">    &#125;      &#125;  &#125;  <span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>得到了源码，可以然并卵啊，，，百思不得其解，最后，百度了一下，发现php://filter读取index.php，居然把这个给忘了，，读吧，</p>
+<p><img src="https://s2.ax1x.com/2019/04/13/ALTdDs.png" alt="ALTdDs.png"></p>
+<p>再base64解码，</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>      <span class="comment">//index.php</span></span><br><span class="line">$txt = $_GET[<span class="string">"txt"</span>];  </span><br><span class="line">$file = $_GET[<span class="string">"file"</span>];  </span><br><span class="line">$password = $_GET[<span class="string">"password"</span>];  </span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($txt)&amp;&amp;(file_get_contents($txt,<span class="string">'r'</span>)===<span class="string">"welcome to the bugkuctf"</span>))&#123;  </span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"hello friend!&lt;br&gt;"</span>;  </span><br><span class="line">    <span class="keyword">if</span>(preg_match(<span class="string">"/flag/"</span>,$file))&#123; </span><br><span class="line">		<span class="keyword">echo</span> <span class="string">"不能现在就给你们flag哦"</span>;</span><br><span class="line">        <span class="keyword">exit</span>();  </span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;  </span><br><span class="line">        <span class="keyword">include</span>($file);   </span><br><span class="line">        $password = unserialize($password);  </span><br><span class="line">        <span class="keyword">echo</span> $password;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;<span class="keyword">else</span>&#123;  </span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"you are not the number of bugku ! "</span>;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>if(preg_match(“/flag/“,$file))    //说明文件名不能含有flag</p>
+</blockquote>
+<blockquote>
+<p>$password = unserialize($password);</p>
+</blockquote>
+<p> 第一句，说明文件名$file不能含有flag，</p>
+<p><img src="https://s2.ax1x.com/2019/04/13/AL7ydI.png" alt="AL7ydI.png"></p>
+<p>而这段代码中，有一个__tostring()方法，双下划线的魔术方法，当Flag类被实例化的时候会自动执行__tostring方法，而这个方法中写了如果file文件存在，那么就输出file文件中的内容。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(preg_match(<span class="string">"/flag/"</span>,$file))&#123; </span><br><span class="line">		<span class="keyword">echo</span> <span class="string">"不能现在就给你们flag哦"</span>;</span><br><span class="line">        <span class="keyword">exit</span>();  </span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;  </span><br><span class="line">        <span class="keyword">include</span>($file);   </span><br><span class="line">        $password = unserialize($password);  </span><br><span class="line">        <span class="keyword">echo</span> $password;  </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>如果文件名没有”flag”了，就会把这个文件包含进来,然后$password进行反序列化，再输出$password的值。</p>
+<p>所以我们要构造一个Flag类型的参数，并把这个参数传给password。</p>
+<p>但是password被unserialize()反序列化处理，所以要先serialize()序列化，关于序列化与反序列化，可以查看我的另一篇文章，PHP序列化与反序列化</p>
+<p>直接<a href="https://tool.lu/coderunner/" target="_blank" rel="noopener">PHP代码在线执行</a></p>
+<p><img src="https://s2.ax1x.com/2019/04/13/ALHcnJ.png" alt="ALHcnJ.png"></p>
+<p>然后把 <code>password=O:4:&quot;Flag&quot;:1:{s:4:&quot;file&quot;;s:8:&quot;flag.php&quot;;}</code>get提交</p>
+<p><a href="https://imgchr.com/i/ALHTje" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/04/13/ALHTje.png" alt="ALHTje.png"></a></p>
+<p>终于拿到flag了</p>
+<h4 id="字符？正则？"><a href="#字符？正则？" class="headerlink" title="字符？正则？"></a>字符？正则？</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span> </span><br><span class="line">highlight_file(<span class="string">'2.php'</span>);</span><br><span class="line">$key=<span class="string">'KEY&#123;********************************&#125;'</span>;</span><br><span class="line">$IM= preg_match(<span class="string">"/key.*key.&#123;4,7&#125;key:\/.\/(.*key)[a-z][[:punct:]]/i"</span>, trim($_GET[<span class="string">"id"</span>]), $match);</span><br><span class="line"><span class="keyword">if</span>( $IM )&#123; </span><br><span class="line">  <span class="keyword">die</span>(<span class="string">'key is: '</span>.$key);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>原文：<a href="https://blog.csdn.net/qq_30464257/article/details/81160656" target="_blank" rel="noopener">https://blog.csdn.net/qq_30464257/article/details/81160656</a> </p>
+<p>关键的还是看preg_match中的内容嘛，这里简单讲一下、需要用到的规则</p>
+<pre><code>1.表达式直接写出来的字符串直接利用，如key
+2.“.”代表任意字符
+3.“*”代表一个或一序列字符重复出现的次数，即前一个字符重复任意次
+4.“\/”代表“/”
+5.[a-z]代表a-z中的任意一个字符
+6.[[:punct:]]代表任意一个字符，包括各种符号
+7./i代表大小写不敏感
+8.{4-7}代表[0-9]中数字连续出现的次数是4-7次
+</code></pre><p>payload：<code>?id=keyaaakeyaaaakey:/a/aakeya@</code></p>
+<h4 id="你从哪里来"><a href="#你从哪里来" class="headerlink" title="你从哪里来"></a>你从哪里来</h4><p>打开题目，就一句话</p>
+<p><img src="https://s2.ax1x.com/2019/04/13/ALL27j.png" alt="ALL27j.png"></p>
+<p>换Google浏览器试了一下，发现还是不行，那么只能修改header了</p>
+<blockquote>
+<p>HTTP Referer是header的一部分，当浏览器向web服务器发送请求的时候，一般会带上Referer，告诉服务器我是从哪个页面链接过来的，服务器基此可以获得一些信息用于处理。</p>
+</blockquote>
+<p><img src="https://s2.ax1x.com/2019/04/13/ALLocT.png" alt="ALLocT.png"></p>
+<h4 id="Web8"><a href="#Web8" class="headerlink" title="Web8"></a>Web8</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">extract($_GET);</span><br><span class="line"><span class="keyword">if</span> (!<span class="keyword">empty</span>($ac))&#123;</span><br><span class="line">$f = trim(file_get_contents($fn));</span><br><span class="line"><span class="keyword">if</span> ($ac === $f)&#123;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"&lt;p&gt;This is flag:"</span> .<span class="string">" $flag&lt;/p&gt;"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"&lt;p&gt;sorry!&lt;/p&gt;"</span>;</span><br><span class="line">&#125;&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>$ac的值===$f，而<strong>$f</strong>的值是从文件名为<strong>$fn</strong>的文件中读取的，我们并不知道<strong>$fn</strong>的值是什么，这时看到了extract()，可以使用变量覆盖，get传入一个$ac的值，然后利用php伪协议，使$fn=php://input，当通过post提交一个和$ac一样的值，然后php://input会读入这个值，使$fn=这个值，从而覆盖掉$f的值</p>
+<p>payload：get：<code>?ac=1&amp;fn=php://input</code>          post :   <code>1</code></p>
+<p><img src="https://s2.ax1x.com/2019/04/13/ALjdAJ.png" alt="ALjdAJ.png"></p>
+<p>在网上还看到一种方法，根据题目提示，访问flag.txt，看到文件内容是flags，然后构造payload：</p>
+<p><code>?ac=flags&amp;fn=flag.txt</code>，也是可以的，这个应该才是出题意图。</p>
+<p><img src="https://s2.ax1x.com/2019/04/13/ALjogP.png" alt="ALjogP.png"></p>
+<h4 id="flag-php"><a href="#flag-php" class="headerlink" title="flag.php"></a>flag.php</h4><p>看看源码，发现login只是个按钮，怪不得怎么点都没反应</p>
+<p>这个提示hint，找了半天不知道是什么用，最后，get传进去hint=1，发现了源码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">include_once</span>(<span class="string">"flag.php"</span>);</span><br><span class="line">$cookie = $_COOKIE[<span class="string">'ISecer'</span>];</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">'hint'</span>]))&#123;</span><br><span class="line">    show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">elseif</span> (unserialize($cookie) === <span class="string">"$KEY"</span>)</span><br><span class="line">&#123;   </span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"$flag"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=<span class="string">"Content-Type"</span> content=<span class="string">"text/html; charset=UTF-8"</span>&gt;</span><br><span class="line">&lt;title&gt;Login&lt;/title&gt;</span><br><span class="line">&lt;link rel=<span class="string">"stylesheet"</span> href=<span class="string">"admin.css"</span> type=<span class="string">"text/css"</span>&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;br&gt;</span><br><span class="line">&lt;div class="container" align="center"&gt;</span><br><span class="line">  &lt;form method=<span class="string">"POST"</span> action=<span class="string">"#"</span>&gt;</span><br><span class="line">    &lt;p&gt;&lt;input name=<span class="string">"user"</span> type=<span class="string">"text"</span> placeholder=<span class="string">"Username"</span>&gt;&lt;/p&gt;</span><br><span class="line">    &lt;p&gt;&lt;input name=<span class="string">"password"</span> type=<span class="string">"password"</span> placeholder=<span class="string">"Password"</span>&gt;&lt;/p&gt;</span><br><span class="line">    &lt;p&gt;&lt;input value=<span class="string">"Login"</span> type=<span class="string">"button"</span>/&gt;&lt;/p&gt;</span><br><span class="line">  &lt;/form&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">&#125;</span><br><span class="line">$KEY=<span class="string">'ISecer:www.isecer.com'</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p><strong>(unserialize($cookie) === “$KEY”)</strong></p>
+<p>这样看起来，只要把<code>$KEY=&#39;ISecer:www.isecer.com&#39;</code>序列化之后，给cookie就可以了，事实上，也确实是把$KEY序列化之后给cookie，只不过，$KEY在序列化的时候，还未定义，是个空值，而不是<code>$KEY=&#39;ISecer:www.isecer.com&#39;</code>，所以，把$KEY=””序列化之后为<code>s:0:&quot;&quot;;</code></p>
+<p><img src="https://s2.ax1x.com/2019/04/13/ALvbxx.png" alt="ALvbxx.png"></p>
+<p>cookie的参数是ISecer，所以payload：</p>
+<blockquote>
+<p>cookie: ISecer=s:0:””;</p>
+</blockquote>
+<p><img src="https://s2.ax1x.com/2019/04/13/ALxVeS.png" alt="ALxVeS.png"></p>
+<h4 id="Trim的笔记本"><a href="#Trim的笔记本" class="headerlink" title="Trim的笔记本"></a>Trim的笔记本</h4>
     </article>
     <!-- license  -->
     
@@ -497,7 +610,7 @@ height:50vh;
             <p>原文作者：<a href="https://specters.top">Specter</a>
             </p><p>原文链接：<a href="https://specters.top/2018/12/16/Bugku-Web-WriteUp/">https://specters.top/2018/12/16/Bugku-Web-WriteUp/</a>
             </p><p>发表日期：<a href="https://specters.top/2018/12/16/Bugku-Web-WriteUp/">December 16th 2018, 4:50:11 pm</a>
-            </p><p>更新日期：<a href="https://specters.top/2018/12/16/Bugku-Web-WriteUp/">December 17th 2018, 5:08:51 pm</a>
+            </p><p>更新日期：<a href="https://specters.top/2018/12/16/Bugku-Web-WriteUp/">April 13th 2019, 11:10:02 pm</a>
             </p><p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -634,7 +747,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Web2"><span class="toc-number">2.</span> <span class="toc-text">Web2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#计算器"><span class="toc-number">3.</span> <span class="toc-text">计算器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#web基础-Get"><span class="toc-number">4.</span> <span class="toc-text">web基础$_Get</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#web基础-POST"><span class="toc-number">5.</span> <span class="toc-text">web基础$_POST</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#矛盾"><span class="toc-number">6.</span> <span class="toc-text">矛盾</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Web3"><span class="toc-number">7.</span> <span class="toc-text">Web3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#域名解析"><span class="toc-number">8.</span> <span class="toc-text">域名解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#你必须让他停下"><span class="toc-number">9.</span> <span class="toc-text">你必须让他停下</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#本地包含"><span class="toc-number">10.</span> <span class="toc-text">本地包含</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#变量一"><span class="toc-number">11.</span> <span class="toc-text">变量一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Web3-1"><span class="toc-number">12.</span> <span class="toc-text">Web3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#头等舱"><span class="toc-number">13.</span> <span class="toc-text">头等舱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#网站被黑"><span class="toc-number">14.</span> <span class="toc-text">网站被黑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#管理员系统"><span class="toc-number">15.</span> <span class="toc-text">管理员系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Web4"><span class="toc-number">16.</span> <span class="toc-text">Web4</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flag在index里"><span class="toc-number">17.</span> <span class="toc-text">flag在index里</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#点击一百万次"><span class="toc-number">18.</span> <span class="toc-text">点击一百万次</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#本地包含2"><span class="toc-number">19.</span> <span class="toc-text">本地包含2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#各种绕过"><span class="toc-number">20.</span> <span class="toc-text">各种绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#求getshell"><span class="toc-number">21.</span> <span class="toc-text">求getshell</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#程序员的本地网站"><span class="toc-number">22.</span> <span class="toc-text">程序员的本地网站</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cookie欺骗"><span class="toc-number">23.</span> <span class="toc-text">cookie欺骗</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#速度要快"><span class="toc-number">24.</span> <span class="toc-text">速度要快</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Web2"><span class="toc-number">2.</span> <span class="toc-text">Web2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#计算器"><span class="toc-number">3.</span> <span class="toc-text">计算器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#web基础-Get"><span class="toc-number">4.</span> <span class="toc-text">web基础$_Get</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#web基础-POST"><span class="toc-number">5.</span> <span class="toc-text">web基础$_POST</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#矛盾"><span class="toc-number">6.</span> <span class="toc-text">矛盾</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Web3"><span class="toc-number">7.</span> <span class="toc-text">Web3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#域名解析"><span class="toc-number">8.</span> <span class="toc-text">域名解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#你必须让他停下"><span class="toc-number">9.</span> <span class="toc-text">你必须让他停下</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#本地包含"><span class="toc-number">10.</span> <span class="toc-text">本地包含</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#变量一"><span class="toc-number">11.</span> <span class="toc-text">变量一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Web3-1"><span class="toc-number">12.</span> <span class="toc-text">Web3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#头等舱"><span class="toc-number">13.</span> <span class="toc-text">头等舱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#网站被黑"><span class="toc-number">14.</span> <span class="toc-text">网站被黑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#管理员系统"><span class="toc-number">15.</span> <span class="toc-text">管理员系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Web4"><span class="toc-number">16.</span> <span class="toc-text">Web4</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flag在index里"><span class="toc-number">17.</span> <span class="toc-text">flag在index里</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#点击一百万次"><span class="toc-number">18.</span> <span class="toc-text">点击一百万次</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#本地包含2"><span class="toc-number">19.</span> <span class="toc-text">本地包含2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#各种绕过"><span class="toc-number">20.</span> <span class="toc-text">各种绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#求getshell"><span class="toc-number">21.</span> <span class="toc-text">求getshell</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#程序员的本地网站"><span class="toc-number">22.</span> <span class="toc-text">程序员的本地网站</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cookie欺骗"><span class="toc-number">23.</span> <span class="toc-text">cookie欺骗</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#速度要快"><span class="toc-number">24.</span> <span class="toc-text">速度要快</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#过狗一句话"><span class="toc-number">25.</span> <span class="toc-text">过狗一句话</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#md5-collision"><span class="toc-number">25.1.</span> <span class="toc-text">md5 collision</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#never-give-up"><span class="toc-number">25.2.</span> <span class="toc-text">never give up</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#welcome-to-bugkuctf"><span class="toc-number">25.3.</span> <span class="toc-text">welcome to bugkuctf</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#字符？正则？"><span class="toc-number">25.4.</span> <span class="toc-text">字符？正则？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#你从哪里来"><span class="toc-number">25.5.</span> <span class="toc-text">你从哪里来</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Web8"><span class="toc-number">25.6.</span> <span class="toc-text">Web8</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#flag-php"><span class="toc-number">25.7.</span> <span class="toc-text">flag.php</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Trim的笔记本"><span class="toc-number">25.8.</span> <span class="toc-text">Trim的笔记本</span></a></li></ol></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
@@ -1017,9 +1130,488 @@ top:50vh;
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 28
+        Total : 53
         </div>
         <!-- search  -->
         
@@ -1035,12 +1627,137 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">03/05</span><a class="archive-post-title" href="/2019/03/05/SQL注入之双查询注入/">SQL注入之双查询注入</a>
+            <span class="archive-post-date">06/30</span><a class="archive-post-title" href="/2019/06/30/MQTT之TLS/">MQTT之TLS</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/18</span><a class="archive-post-title" href="/2019/06/18/物联网应用层coap协议/">物联网应用层coap协议</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/28</span><a class="archive-post-title" href="/2019/05/28/搭建MQTT服务器/">nodejs搭建MQTT服务器</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/23</span><a class="archive-post-title" href="/2019/05/23/攻防世界reverse/">攻防世界reverse</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/22</span><a class="archive-post-title" href="/2019/05/22/南邮re逆向writeup/">南邮re逆向writeup</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/15</span><a class="archive-post-title" href="/2019/05/15/物联网安全实践二/">物联网安全实践二</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/10</span><a class="archive-post-title" href="/2019/05/10/kali破解WiFi密码-wpa-wpa2/">kali破解WiFi密码(wpa/wpa2)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/02</span><a class="archive-post-title" href="/2019/05/02/ISCC-2019/">ISCC_2019</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href="/2019/05/01/CUMT双月赛三/">CUMT双月赛三</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/25</span><a class="archive-post-title" href="/2019/04/25/记攻防世界几个有意思的MISC/">记攻防世界几个有意思的MISC</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/23</span><a class="archive-post-title" href="/2019/04/23/第十二届全国大学生安全竞赛/">第十二届全国大学生安全竞赛</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/18</span><a class="archive-post-title" href="/2019/04/18/攻防世界xctf之web/">攻防世界xctf之web</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/14</span><a class="archive-post-title" href="/2019/04/14/南邮Crypto/">南邮Crypto</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/13</span><a class="archive-post-title" href="/2019/04/13/开头为0e的MD5值/">开头为0e的MD5值</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/12</span><a class="archive-post-title" href="/2019/04/12/BWVS靶场通关/">BWVS靶场通关</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/12</span><a class="archive-post-title" href="/2019/04/12/BWVS靶场搭建/">BWVS靶场搭建</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/10</span><a class="archive-post-title" href="/2019/04/10/实验吧-web/">实验吧--web</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/10</span><a class="archive-post-title" href="/2019/04/10/iOS远程越狱间谍软件Pegasus技术分析/">iOS远程越狱间谍软件Pegasus技术分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/09</span><a class="archive-post-title" href="/2019/04/09/IOT实验-arduino蓝牙模块控制小灯/">IOT实验-Arduino蓝牙模块控制小灯</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/06</span><a class="archive-post-title" href="/2019/04/06/PHP变量覆盖/">PHP变量覆盖</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/02</span><a class="archive-post-title" href="/2019/04/02/CUMT-ctf实训平台/">CUMT-ctf实训平台</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href="/2019/03/30/南邮ctf-web/">南邮ctf--web</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/28</span><a class="archive-post-title" href="/2019/03/28/php文件包含/">php文件包含</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/27</span><a class="archive-post-title" href="/2019/03/27/bugku代码审计/">bugku代码审计</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/26</span><a class="archive-post-title" href="/2019/03/26/php序列化与反序列化/">php序列化与反序列化</a>
         </li>
     
     
         <li class="archive-post-item">
             <span class="archive-post-date">03/05</span><a class="archive-post-title" href="/2019/03/05/SQL注入之盲注/">SQL注入之盲注</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/05</span><a class="archive-post-title" href="/2019/03/05/SQL注入之双查询注入/">SQL注入之双查询注入</a>
         </li>
     
     
@@ -1099,12 +1816,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2018/12/16/CUMT双月赛一/">CUMT-12月月赛</a>
+            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2018/12/16/Bugku-Web-WriteUp/">Bugku_Web_WriteUp</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2018/12/16/Bugku-Web-WriteUp/">Bugku_Web_WriteUp</a>
+            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2018/12/16/CUMT双月赛一/">CUMT-12月月赛</a>
         </li>
     
     
@@ -1154,12 +1871,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/06</span><a class="archive-post-title" href="/2018/11/06/最大子段和/">最大子段和</a>
+            <span class="archive-post-date">11/06</span><a class="archive-post-title" href="/2018/11/06/最长公共子序列/">最长公共子序列</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/06</span><a class="archive-post-title" href="/2018/11/06/最长公共子序列/">最长公共子序列</a>
+            <span class="archive-post-date">11/06</span><a class="archive-post-title" href="/2018/11/06/最大子段和/">最大子段和</a>
         </li>
     
     
@@ -1187,31 +1904,93 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="CTF"><span class="iconfont-archer">&#xe606;</span>CTF</span>
+        <span class="sidebar-tag-name" data-tags="算法"><span class="iconfont-archer">&#xe606;</span>算法</span>
+    
+        <span class="sidebar-tag-name" data-tags="动态规划"><span class="iconfont-archer">&#xe606;</span>动态规划</span>
+    
+        <span class="sidebar-tag-name" data-tags="BWVS靶场"><span class="iconfont-archer">&#xe606;</span>BWVS靶场</span>
+    
+        <span class="sidebar-tag-name" data-tags="ctf"><span class="iconfont-archer">&#xe606;</span>ctf</span>
+    
+        <span class="sidebar-tag-name" data-tags="BWVS靶场搭建"><span class="iconfont-archer">&#xe606;</span>BWVS靶场搭建</span>
     
         <span class="sidebar-tag-name" data-tags="0-1背包"><span class="iconfont-archer">&#xe606;</span>0-1背包</span>
     
         <span class="sidebar-tag-name" data-tags="完全背包"><span class="iconfont-archer">&#xe606;</span>完全背包</span>
     
-        <span class="sidebar-tag-name" data-tags="ctf"><span class="iconfont-archer">&#xe606;</span>ctf</span>
+        <span class="sidebar-tag-name" data-tags="CUMT双月赛三"><span class="iconfont-archer">&#xe606;</span>CUMT双月赛三</span>
     
-        <span class="sidebar-tag-name" data-tags="算法"><span class="iconfont-archer">&#xe606;</span>算法</span>
+        <span class="sidebar-tag-name" data-tags="web"><span class="iconfont-archer">&#xe606;</span>web</span>
     
-        <span class="sidebar-tag-name" data-tags="动态规划"><span class="iconfont-archer">&#xe606;</span>动态规划</span>
+        <span class="sidebar-tag-name" data-tags="cumt双月赛一"><span class="iconfont-archer">&#xe606;</span>cumt双月赛一</span>
+    
+        <span class="sidebar-tag-name" data-tags="cumt"><span class="iconfont-archer">&#xe606;</span>cumt</span>
+    
+        <span class="sidebar-tag-name" data-tags="2019_ISCC"><span class="iconfont-archer">&#xe606;</span>2019_ISCC</span>
+    
+        <span class="sidebar-tag-name" data-tags="安恒11月月赛"><span class="iconfont-archer">&#xe606;</span>安恒11月月赛</span>
     
         <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
     
+        <span class="sidebar-tag-name" data-tags="物联网基础实验"><span class="iconfont-archer">&#xe606;</span>物联网基础实验</span>
+    
+        <span class="sidebar-tag-name" data-tags="Arduino"><span class="iconfont-archer">&#xe606;</span>Arduino</span>
+    
         <span class="sidebar-tag-name" data-tags="Linux"><span class="iconfont-archer">&#xe606;</span>Linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="php变量覆盖"><span class="iconfont-archer">&#xe606;</span>php变量覆盖</span>
     
         <span class="sidebar-tag-name" data-tags="Crypto"><span class="iconfont-archer">&#xe606;</span>Crypto</span>
     
         <span class="sidebar-tag-name" data-tags="Python"><span class="iconfont-archer">&#xe606;</span>Python</span>
     
+        <span class="sidebar-tag-name" data-tags="IoT"><span class="iconfont-archer">&#xe606;</span>IoT</span>
+    
+        <span class="sidebar-tag-name" data-tags="MQTT"><span class="iconfont-archer">&#xe606;</span>MQTT</span>
+    
+        <span class="sidebar-tag-name" data-tags="TLS"><span class="iconfont-archer">&#xe606;</span>TLS</span>
+    
         <span class="sidebar-tag-name" data-tags="SQL"><span class="iconfont-archer">&#xe606;</span>SQL</span>
+    
+        <span class="sidebar-tag-name" data-tags="代码审计"><span class="iconfont-archer">&#xe606;</span>代码审计</span>
+    
+        <span class="sidebar-tag-name" data-tags="iOS越狱"><span class="iconfont-archer">&#xe606;</span>iOS越狱</span>
+    
+        <span class="sidebar-tag-name" data-tags="网络安全"><span class="iconfont-archer">&#xe606;</span>网络安全</span>
     
         <span class="sidebar-tag-name" data-tags="MISC"><span class="iconfont-archer">&#xe606;</span>MISC</span>
     
+        <span class="sidebar-tag-name" data-tags="wifi密码破解"><span class="iconfont-archer">&#xe606;</span>wifi密码破解</span>
+    
+        <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
+    
         <span class="sidebar-tag-name" data-tags="upload_labs"><span class="iconfont-archer">&#xe606;</span>upload_labs</span>
+    
+        <span class="sidebar-tag-name" data-tags="实验吧web"><span class="iconfont-archer">&#xe606;</span>实验吧web</span>
+    
+        <span class="sidebar-tag-name" data-tags="南邮web"><span class="iconfont-archer">&#xe606;</span>南邮web</span>
+    
+        <span class="sidebar-tag-name" data-tags="南邮Crypto"><span class="iconfont-archer">&#xe606;</span>南邮Crypto</span>
+    
+        <span class="sidebar-tag-name" data-tags="php文件包含"><span class="iconfont-archer">&#xe606;</span>php文件包含</span>
+    
+        <span class="sidebar-tag-name" data-tags="re"><span class="iconfont-archer">&#xe606;</span>re</span>
+    
+        <span class="sidebar-tag-name" data-tags="reverse"><span class="iconfont-archer">&#xe606;</span>reverse</span>
+    
+        <span class="sidebar-tag-name" data-tags="物联网实践"><span class="iconfont-archer">&#xe606;</span>物联网实践</span>
+    
+        <span class="sidebar-tag-name" data-tags="SYN FLOOD"><span class="iconfont-archer">&#xe606;</span>SYN FLOOD</span>
+    
+        <span class="sidebar-tag-name" data-tags="Coap"><span class="iconfont-archer">&#xe606;</span>Coap</span>
+    
+        <span class="sidebar-tag-name" data-tags="攻防世界xctf-web"><span class="iconfont-archer">&#xe606;</span>攻防世界xctf-web</span>
+    
+        <span class="sidebar-tag-name" data-tags="2019全国信安赛"><span class="iconfont-archer">&#xe606;</span>2019全国信安赛</span>
+    
+        <span class="sidebar-tag-name" data-tags="0e开头MD5"><span class="iconfont-archer">&#xe606;</span>0e开头MD5</span>
+    
+        <span class="sidebar-tag-name" data-tags="攻防世界MISC"><span class="iconfont-archer">&#xe606;</span>攻防世界MISC</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -1246,21 +2025,25 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="CTF"><span class="iconfont-archer">&#xe60a;</span>CTF</span>
-    
         <span class="sidebar-category-name" data-categories="算法"><span class="iconfont-archer">&#xe60a;</span>算法</span>
     
         <span class="sidebar-category-name" data-categories="ctf"><span class="iconfont-archer">&#xe60a;</span>ctf</span>
     
         <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
     
+        <span class="sidebar-category-name" data-categories="Arduino"><span class="iconfont-archer">&#xe60a;</span>Arduino</span>
+    
         <span class="sidebar-category-name" data-categories="Linux"><span class="iconfont-archer">&#xe60a;</span>Linux</span>
     
         <span class="sidebar-category-name" data-categories="Crypto"><span class="iconfont-archer">&#xe60a;</span>Crypto</span>
     
+        <span class="sidebar-category-name" data-categories="IoT"><span class="iconfont-archer">&#xe60a;</span>IoT</span>
+    
         <span class="sidebar-category-name" data-categories="SQL"><span class="iconfont-archer">&#xe60a;</span>SQL</span>
     
-        <span class="sidebar-category-name" data-categories="MISC"><span class="iconfont-archer">&#xe60a;</span>MISC</span>
+        <span class="sidebar-category-name" data-categories="iOS越狱"><span class="iconfont-archer">&#xe60a;</span>iOS越狱</span>
+    
+        <span class="sidebar-category-name" data-categories="ctf"><span class="iconfont-archer">&#xe60a;</span>ctf</span>
     
         <span class="sidebar-category-name" data-categories="Python"><span class="iconfont-archer">&#xe60a;</span>Python</span>
     
